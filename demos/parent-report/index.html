@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家长学习报告</title>
+  <style>
+    :root {
+      --bg: #eef3f1;
+      --phone: #f7faf8;
+      --ink: #17231f;
+      --muted: #6b7b75;
+      --soft: #98a9a2;
+      --line: #e0e8e4;
+      --green: #22b573;
+      --green-dark: #137a4e;
+      --cyan: #3aaec8;
+      --blue: #5b7ff3;
+      --yellow: #f2b84b;
+      --red: #e66a5d;
+      --card: #ffffff;
+      --wash: #edf8f2;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 24% 18%, rgba(34, 181, 115, 0.18), transparent 28%),
+        radial-gradient(circle at 82% 74%, rgba(58, 174, 200, 0.16), transparent 30%),
+        linear-gradient(135deg, #dfe9e5 0%, #f7f2ea 100%);
+      display: grid;
+      place-items: center;
+      padding: 32px;
+    }
+
+    .phone-shell {
+      width: min(430px, calc(100vw - 28px));
+      height: min(900px, calc(100vh - 32px));
+      border-radius: 36px;
+      padding: 12px;
+      background: #111816;
+      box-shadow: 0 28px 90px rgba(27, 44, 37, 0.32);
+    }
+
+    .phone {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 28px;
+      background: var(--phone);
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .mini-nav {
+      height: 56px;
+      display: grid;
+      grid-template-columns: 44px 1fr 72px;
+      align-items: center;
+      padding: 0 14px;
+      background: rgba(247, 250, 248, 0.94);
+      border-bottom: 1px solid rgba(224, 232, 228, 0.8);
+    }
+
+    .back {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink);
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .mini-title {
+      text-align: center;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .mini-capsule {
+      justify-self: end;
+      width: 62px;
+      height: 30px;
+      border-radius: 16px;
+      border: 1px solid #d5dfda;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      justify-items: center;
+      color: #5e6c67;
+      background: #fff;
+      font-size: 16px;
+    }
+
+    .content {
+      overflow: auto;
+      padding: 16px 14px 28px;
+      scrollbar-width: none;
+    }
+
+    .content::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hero {
+      padding: 20px;
+      border-radius: 22px;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(21, 122, 78, 0.94), rgba(38, 164, 111, 0.92)),
+        radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.28), transparent 30%);
+      box-shadow: 0 18px 42px rgba(19, 122, 78, 0.26);
+    }
+
+    .child-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .child {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--green-dark);
+      font-weight: 900;
+      background: #dff8e9;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .child-name {
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .period {
+      margin-top: 3px;
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 12px;
+    }
+
+    .status-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #eafff2;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .summary-label {
+      margin: 0 0 8px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+    }
+
+    .summary-text {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.38;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .section {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--card);
+      border: 1px solid rgba(224, 232, 228, 0.78);
+      box-shadow: 0 8px 24px rgba(31, 48, 41, 0.06);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .section-note {
+      color: var(--soft);
+      font-size: 12px;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      min-height: 84px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #f7faf8;
+      border: 1px solid #e7efeb;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .metric-value small {
+      margin-left: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .metric-desc {
+      margin-top: 8px;
+      color: var(--soft);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .distribution {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .donut {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) 0 38%, var(--cyan) 38% 62%, var(--blue) 62% 80%, var(--yellow) 80% 100%);
+      display: grid;
+      place-items: center;
+    }
+
+    .donut::after {
+      content: "本周\a 学习";
+      white-space: pre;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 900;
+      background: #fff;
+    }
+
+    .legend {
+      display: grid;
+      gap: 10px;
+    }
+
+    .legend-row {
+      display: grid;
+      grid-template-columns: 8px 1fr auto 12px;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      min-height: 34px;
+      padding: 4px 0;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .legend-row strong {
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .chevron {
+      color: var(--soft);
+      font-weight: 900;
+    }
+
+    .tap-hint {
+      margin: 14px 0 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--muted);
+      background: #f7faf8;
+      border: 1px solid #e7efeb;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .notice {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #e6eee9;
+      background: #fbfcfb;
+    }
+
+    .notice.good {
+      background: #f0fbf5;
+      border-color: #cfefdc;
+    }
+
+    .notice.watch {
+      background: #fff8ec;
+      border-color: #f4dfb7;
+    }
+
+    .notice-title {
+      margin: 0 0 8px;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .notice p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .advice-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .advice {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #f7faf8;
+      border: 1px solid #e7efeb;
+    }
+
+    .step {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 900;
+      background: var(--green);
+      font-size: 13px;
+    }
+
+    .advice strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .advice span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .footer-space {
+      height: 10px;
+    }
+
+    .detail-page {
+      position: absolute;
+      inset: 56px 0 0;
+      z-index: 5;
+      display: none;
+      grid-template-rows: auto 1fr;
+      background: var(--phone);
+    }
+
+    .detail-page.active {
+      display: grid;
+    }
+
+    .detail-top {
+      height: 52px;
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 250, 248, 0.96);
+    }
+
+    .detail-title {
+      text-align: center;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .detail-content {
+      overflow: auto;
+      padding: 14px;
+      scrollbar-width: none;
+    }
+
+    .detail-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .filter-chip {
+      border: 1px solid #dfe8e4;
+      border-radius: 999px;
+      padding: 7px 12px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .filter-chip.active {
+      color: #fff;
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .record-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .record-card {
+      width: 100%;
+      border: 1px solid #e3ebe7;
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      text-align: left;
+      font-family: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .record-main {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .record-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .record-sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .record-badge {
+      flex: 0 0 auto;
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: var(--green-dark);
+      background: var(--wash);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .record-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .meta-cell {
+      padding: 8px;
+      border-radius: 10px;
+      background: #f7faf8;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .meta-cell strong {
+      display: block;
+      margin-top: 3px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .qa-bubble {
+      max-width: 86%;
+      margin: 10px 0;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .qa-bubble.student {
+      margin-left: auto;
+      color: #fff;
+      background: var(--green);
+      border-bottom-right-radius: 4px;
+    }
+
+    .qa-bubble.ai {
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid #e5eee9;
+      border-bottom-left-radius: 4px;
+    }
+
+    .compare-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .wrong-card {
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      border: 1px solid #e5eee9;
+    }
+
+    .wrong-card.before {
+      border-color: #f2c6bf;
+      background: #fff7f5;
+    }
+
+    .wrong-card.after {
+      border-color: #ccefdc;
+      background: #f1fbf5;
+    }
+
+    .wrong-label {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .wrong-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .support-note {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      color: var(--muted);
+      background: #f7faf8;
+      border: 1px solid #e7efeb;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        display: block;
+        padding: 0;
+        background: var(--phone);
+      }
+
+      .phone-shell {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 0;
+        background: var(--phone);
+        box-shadow: none;
+      }
+
+      .phone {
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="phone">
+      <header class="mini-nav">
+        <button class="back" type="button" aria-label="返回">‹</button>
+        <div class="mini-title">学习报告</div>
+        <div class="mini-capsule" aria-hidden="true"><span>···</span><span>○</span></div>
+      </header>
+
+      <main class="content">
+        <section class="hero" aria-labelledby="summary-title">
+          <div class="child-row">
+            <div class="child">
+              <div class="avatar">林</div>
+              <div>
+                <div class="child-name">林一辰</div>
+                <div class="period">2026.07.06 - 07.12</div>
+              </div>
+            </div>
+            <div class="status-pill">周学习报告</div>
+          </div>
+          <p class="summary-label" id="summary-title">一句话总结</p>
+          <p class="summary-text">本周学习投入稳定，数学练习和错题订正进步明显，阅读坚持度还可以继续加强。</p>
+        </section>
+
+        <section class="section" aria-labelledby="overview-title">
+          <div class="section-head">
+            <h2 class="section-title" id="overview-title">学习情况概览</h2>
+            <span class="section-note">本周</span>
+          </div>
+          <div class="overview-grid">
+            <div class="metric">
+              <div class="metric-label">学习天数</div>
+              <div class="metric-value">5<small>天</small></div>
+              <div class="metric-desc">比上周多 1 天</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">学习时长</div>
+              <div class="metric-value">4.8<small>小时</small></div>
+              <div class="metric-desc">主要集中在晚间</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">完成练习</div>
+              <div class="metric-value">86<small>题</small></div>
+              <div class="metric-desc">订正完成率 78%</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">AI 答疑</div>
+              <div class="metric-value">12<small>次</small></div>
+              <div class="metric-desc">主动提问意愿较好</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="distribution-title">
+          <div class="section-head">
+            <h2 class="section-title" id="distribution-title">学习时长分布</h2>
+            <span class="section-note">点击查看详情</span>
+          </div>
+          <div class="distribution">
+            <div class="donut" aria-hidden="true"></div>
+            <div class="legend">
+              <button class="legend-row" type="button" data-open-detail="practice"><span class="dot"></span><span>数学练习</span><strong>38%</strong><span class="chevron">›</span></button>
+              <button class="legend-row" type="button" data-open-detail="reading"><span class="dot" style="background: var(--cyan)"></span><span>课外阅读</span><strong>24%</strong><span class="chevron">›</span></button>
+              <button class="legend-row" type="button" data-open-detail="mistakes"><span class="dot" style="background: var(--blue)"></span><span>错题订正</span><strong>18%</strong><span class="chevron">›</span></button>
+              <button class="legend-row" type="button" data-open-detail="ai"><span class="dot" style="background: var(--yellow)"></span><span>AI 答疑</span><strong>20%</strong><span class="chevron">›</span></button>
+            </div>
+          </div>
+          <p class="tap-hint">这里展示孩子本周在不同学习行为上的时间投入。家长点击后可查看轻量学习记录，不展示班级排名和其他学生信息。</p>
+        </section>
+
+        <section class="section" aria-labelledby="growth-title">
+          <div class="section-head">
+            <h2 class="section-title" id="growth-title">进步与待关注</h2>
+            <span class="section-note">老师可见口径</span>
+          </div>
+          <div class="compare">
+            <div class="notice good">
+              <h3 class="notice-title">进步亮点</h3>
+              <p>错题订正更及时，连续 3 天在练习后主动查看解析，计算题正确率比上周提升 9%。</p>
+            </div>
+            <div class="notice watch">
+              <h3 class="notice-title">待关注</h3>
+              <p>阅读学习多在任务截止前完成，过程不够连续，可以帮助孩子建立更轻量的阅读节奏。</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="advice-title">
+          <div class="section-head">
+            <h2 class="section-title" id="advice-title">家长陪伴建议</h2>
+            <span class="section-note">低压力支持</span>
+          </div>
+          <div class="advice-list">
+            <div class="advice">
+              <div class="step">1</div>
+              <div>
+                <strong>周末听孩子讲 2 道错题</strong>
+                <span>不需要重新讲解，重点听孩子说“当时哪里想错了、现在怎么改”。</span>
+              </div>
+            </div>
+            <div class="advice">
+              <div class="step">2</div>
+              <div>
+                <strong>把阅读拆成 10 分钟</strong>
+                <span>建议固定在晚饭后或睡前，先追求稳定开始，再逐步延长时间。</span>
+              </div>
+            </div>
+            <div class="advice">
+              <div class="step">3</div>
+              <div>
+                <strong>肯定主动提问</strong>
+                <span>本周 AI 答疑次数较多，可以鼓励孩子遇到问题先表达困惑，而不是只追求答案。</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div class="footer-space"></div>
+      </main>
+
+      <section class="detail-page" id="detail-practice" aria-hidden="true">
+        <div class="detail-top">
+          <button class="back close-detail" type="button" aria-label="返回">‹</button>
+          <div class="detail-title">数学练习</div>
+          <span></span>
+        </div>
+        <div class="detail-content">
+          <div class="filter-row">
+            <button class="filter-chip active" type="button">本周</button>
+            <button class="filter-chip" type="button">本月</button>
+            <button class="filter-chip" type="button">近三个月</button>
+          </div>
+          <div class="record-list">
+            <button class="record-card" type="button" data-open-detail="practiceCompare">
+              <div class="record-main">
+                <div>
+                  <h3 class="record-title">小数乘除法巩固练习</h3>
+                  <div class="record-sub">7 月 10 日完成，已完成错题订正</div>
+                </div>
+                <span class="record-badge">查看订正</span>
+              </div>
+              <div class="record-meta">
+                <div class="meta-cell">练习时长<strong>18 分钟</strong></div>
+                <div class="meta-cell">正确率<strong>86%</strong></div>
+                <div class="meta-cell">错题数<strong>3 题</strong></div>
+              </div>
+            </button>
+            <button class="record-card" type="button" data-open-detail="practiceCompare">
+              <div class="record-main">
+                <div>
+                  <h3 class="record-title">应用题读题训练</h3>
+                  <div class="record-sub">7 月 8 日完成，订正 2 题</div>
+                </div>
+                <span class="record-badge">查看订正</span>
+              </div>
+              <div class="record-meta">
+                <div class="meta-cell">练习时长<strong>22 分钟</strong></div>
+                <div class="meta-cell">正确率<strong>78%</strong></div>
+                <div class="meta-cell">错题数<strong>4 题</strong></div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-page" id="detail-practiceCompare" aria-hidden="true">
+        <div class="detail-top">
+          <button class="back close-detail" type="button" aria-label="返回">‹</button>
+          <div class="detail-title">订正前后对比</div>
+          <span></span>
+        </div>
+        <div class="detail-content">
+          <div class="compare-grid">
+            <div class="wrong-card before">
+              <p class="wrong-label">订正前</p>
+              <p>题目：3.6 ÷ 0.4 = ?<br>学生作答：0.9<br>问题：小数点移动方向判断错误。</p>
+            </div>
+            <div class="wrong-card after">
+              <p class="wrong-label">订正后</p>
+              <p>学生订正：9<br>订正说明：先把 0.4 扩大 10 倍变成 4，3.6 也扩大 10 倍变成 36，再计算 36 ÷ 4。</p>
+            </div>
+          </div>
+          <div class="support-note">家长可以让孩子口头讲一遍“小数除法为什么要同时扩大”，重点听思路，不需要再额外加题。</div>
+        </div>
+      </section>
+
+      <section class="detail-page" id="detail-mistakes" aria-hidden="true">
+        <div class="detail-top">
+          <button class="back close-detail" type="button" aria-label="返回">‹</button>
+          <div class="detail-title">错题订正</div>
+          <span></span>
+        </div>
+        <div class="detail-content">
+          <div class="filter-row">
+            <button class="filter-chip active" type="button">本周</button>
+            <button class="filter-chip" type="button">本月</button>
+            <button class="filter-chip" type="button">近三个月</button>
+          </div>
+          <div class="record-list">
+            <button class="record-card" type="button" data-open-detail="mistakeDetail">
+              <div class="record-main">
+                <div>
+                  <h3 class="record-title">小数除法错题</h3>
+                  <div class="record-sub">已订正，孩子补充了订正说明</div>
+                </div>
+                <span class="record-badge">已订正</span>
+              </div>
+              <div class="record-meta">
+                <div class="meta-cell">错因<strong>计算规则</strong></div>
+                <div class="meta-cell">尝试次数<strong>2 次</strong></div>
+                <div class="meta-cell">订正状态<strong>完成</strong></div>
+              </div>
+            </button>
+            <button class="record-card" type="button" data-open-detail="mistakeDetail">
+              <div class="record-main">
+                <div>
+                  <h3 class="record-title">应用题单位换算</h3>
+                  <div class="record-sub">已查看解析，待二次复习</div>
+                </div>
+                <span class="record-badge">待复习</span>
+              </div>
+              <div class="record-meta">
+                <div class="meta-cell">错因<strong>读题</strong></div>
+                <div class="meta-cell">尝试次数<strong>1 次</strong></div>
+                <div class="meta-cell">订正状态<strong>已订正</strong></div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-page" id="detail-mistakeDetail" aria-hidden="true">
+        <div class="detail-top">
+          <button class="back close-detail" type="button" aria-label="返回">‹</button>
+          <div class="detail-title">错题详情</div>
+          <span></span>
+        </div>
+        <div class="detail-content">
+          <div class="wrong-card before">
+            <p class="wrong-label">原错题</p>
+            <p>一根绳子长 3.6 米，每 0.4 米剪一段，可以剪几段？<br>学生原答：0.9 段。</p>
+          </div>
+          <div class="wrong-card after" style="margin-top: 10px">
+            <p class="wrong-label">订正记录</p>
+            <p>订正答案：9 段。<br>孩子说明：要算 3.6 里面有几个 0.4，不能只看小数点位置。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-page" id="detail-ai" aria-hidden="true">
+        <div class="detail-top">
+          <button class="back close-detail" type="button" aria-label="返回">‹</button>
+          <div class="detail-title">AI 答疑</div>
+          <span></span>
+        </div>
+        <div class="detail-content">
+          <div class="filter-row">
+            <button class="filter-chip active" type="button">本周</button>
+            <button class="filter-chip" type="button">本月</button>
+            <button class="filter-chip" type="button">近三个月</button>
+          </div>
+          <div class="record-list">
+            <button class="record-card" type="button" data-open-detail="aiChat">
+              <div class="record-main">
+                <div>
+                  <h3 class="record-title">小数除法为什么要同时扩大？</h3>
+                  <div class="record-sub">7 月 10 日 20:18，围绕错题订正提问</div>
+                </div>
+                <span class="record-badge">3 轮对话</span>
+              </div>
+            </button>
+            <button class="record-card" type="button" data-open-detail="aiChat">
+              <div class="record-main">
+                <div>
+                  <h3 class="record-title">应用题怎么找单位量？</h3>
+                  <div class="record-sub">7 月 8 日 19:42，AI 引导孩子画条件关系</div>
+                </div>
+                <span class="record-badge">4 轮对话</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-page" id="detail-aiChat" aria-hidden="true">
+        <div class="detail-top">
+          <button class="back close-detail" type="button" aria-label="返回">‹</button>
+          <div class="detail-title">对话详情</div>
+          <span></span>
+        </div>
+        <div class="detail-content">
+          <div class="qa-bubble student">为什么 3.6 ÷ 0.4 不是 0.9？</div>
+          <div class="qa-bubble ai">你可以先想：3.6 米里有几个 0.4 米。把 0.4 看成 4 个 0.1，3.6 里有 36 个 0.1，所以是 36 ÷ 4。</div>
+          <div class="qa-bubble student">所以答案是 9？</div>
+          <div class="qa-bubble ai">对。你已经找到关键了：不是把两个数直接小数点相减，而是看“包含几个 0.4”。</div>
+        </div>
+      </section>
+
+      <section class="detail-page" id="detail-reading" aria-hidden="true">
+        <div class="detail-top">
+          <button class="back close-detail" type="button" aria-label="返回">‹</button>
+          <div class="detail-title">课外阅读</div>
+          <span></span>
+        </div>
+        <div class="detail-content">
+          <div class="filter-row">
+            <button class="filter-chip active" type="button">本周</button>
+            <button class="filter-chip" type="button">本月</button>
+            <button class="filter-chip" type="button">近三个月</button>
+          </div>
+          <div class="record-list">
+            <button class="record-card" type="button">
+              <div class="record-main">
+                <div>
+                  <h3 class="record-title">《神奇校车：水的故事》</h3>
+                  <div class="record-sub">本周阅读 3 次，睡前阅读较多</div>
+                </div>
+                <span class="record-badge">进度 68%</span>
+              </div>
+              <div class="record-meta">
+                <div class="meta-cell">阅读时长<strong>46 分钟</strong></div>
+                <div class="meta-cell">阅读进度<strong>68%</strong></div>
+                <div class="meta-cell">笔记<strong>2 条</strong></div>
+              </div>
+            </button>
+            <button class="record-card" type="button">
+              <div class="record-main">
+                <div>
+                  <h3 class="record-title">《中国寓言故事》</h3>
+                  <div class="record-sub">本周阅读 2 次，完成一篇读后感草稿</div>
+                </div>
+                <span class="record-badge">进度 42%</span>
+              </div>
+              <div class="record-meta">
+                <div class="meta-cell">阅读时长<strong>31 分钟</strong></div>
+                <div class="meta-cell">阅读进度<strong>42%</strong></div>
+                <div class="meta-cell">笔记<strong>1 条</strong></div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script>
+    const pages = Array.from(document.querySelectorAll('.detail-page'));
+    const historyStack = [];
+
+    function openDetail(id) {
+      const page = document.getElementById(`detail-${id}`);
+      if (!page) return;
+      const current = document.querySelector('.detail-page.active');
+      if (current && current.id !== page.id) {
+        historyStack.push(current.id);
+        current.classList.remove('active');
+        current.setAttribute('aria-hidden', 'true');
+      }
+      page.classList.add('active');
+      page.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDetail() {
+      const current = document.querySelector('.detail-page.active');
+      if (!current) return;
+      current.classList.remove('active');
+      current.setAttribute('aria-hidden', 'true');
+      const previous = historyStack.pop();
+      if (previous) {
+        const previousPage = document.getElementById(previous);
+        previousPage.classList.add('active');
+        previousPage.setAttribute('aria-hidden', 'false');
+      }
+    }
+
+    document.querySelectorAll('[data-open-detail]').forEach((button) => {
+      button.addEventListener('click', () => openDetail(button.dataset.openDetail));
+    });
+
+    document.querySelectorAll('.close-detail').forEach((button) => {
+      button.addEventListener('click', closeDetail);
+    });
+
+    document.querySelectorAll('.filter-row').forEach((row) => {
+      row.addEventListener('click', (event) => {
+        const chip = event.target.closest('.filter-chip');
+        if (!chip) return;
+        row.querySelectorAll('.filter-chip').forEach((item) => item.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
