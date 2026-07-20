@@ -432,6 +432,88 @@
             color: var(--ink);
         }
 
+        .annotation-tools {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 4px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #f5f8fc;
+        }
+
+        .annotation-tools.show {
+            display: flex;
+        }
+
+        .annotation-tool {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .annotation-tool:hover {
+            color: var(--blue);
+            background: #fff;
+        }
+
+        .annotation-tool.active {
+            color: var(--blue);
+            border-color: #9cc5ff;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(35, 120, 255, 0.12);
+        }
+
+        .annotation-tool svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .annotation-divider {
+            width: 1px;
+            height: 22px;
+            margin: 0 2px;
+            background: var(--line);
+        }
+
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .color-swatch::before {
+            content: "";
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: var(--swatch);
+            box-shadow: 0 0 0 1px rgba(16, 24, 40, 0.18);
+        }
+
+        .color-swatch.active {
+            background: #fff;
+            box-shadow: inset 0 0 0 2px var(--blue);
+        }
+
+        .btn.annotation-active {
+            color: #fff;
+            border-color: var(--blue);
+            background: var(--blue);
+        }
+
         .screen-grid {
             display: grid;
             gap: 14px;
@@ -617,6 +699,25 @@
             pointer-events: none;
             background: radial-gradient(circle at 15% 8%, rgba(255, 255, 255, 0.64), transparent 22%);
             mix-blend-mode: multiply;
+        }
+
+        .annotation-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 6;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            touch-action: none;
+        }
+
+        .viewer.annotating .annotation-canvas {
+            pointer-events: auto;
+            cursor: crosshair;
+        }
+
+        .viewer.annotating.eraser-active .annotation-canvas {
+            cursor: cell;
         }
 
         .eink-top {
@@ -973,6 +1074,27 @@
                             <span class="viewer-summary" id="viewerSummary">等待选择学生</span>
                         </div>
                         <div class="actions">
+                            <div class="annotation-tools" id="annotationTools" aria-label="画笔工具">
+                                <button class="annotation-tool active" data-draw-tool="pen" title="画笔" aria-label="画笔">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m14.5 5.5 4 4"/><path d="M3 21l3.8-1 11.7-11.7a2.8 2.8 0 0 0-4-4L2.8 16 2 20.2Z"/></svg>
+                                </button>
+                                <button class="annotation-tool" data-draw-tool="eraser" title="橡皮擦" aria-label="橡皮擦">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m7 21-4-4L15 5a2.8 2.8 0 0 1 4 4L7 21Z"/><path d="m11 9 4 4"/><path d="M7 21h13"/></svg>
+                                </button>
+                                <span class="annotation-divider" aria-hidden="true"></span>
+                                <button class="color-swatch active" data-draw-color="#f04438" style="--swatch:#f04438" title="红色画笔" aria-label="红色画笔"></button>
+                                <button class="color-swatch" data-draw-color="#1677ff" style="--swatch:#1677ff" title="蓝色画笔" aria-label="蓝色画笔"></button>
+                                <button class="color-swatch" data-draw-color="#111827" style="--swatch:#111827" title="黑色画笔" aria-label="黑色画笔"></button>
+                                <button class="color-swatch" data-draw-color="#f5b82e" style="--swatch:#f5b82e" title="黄色画笔" aria-label="黄色画笔"></button>
+                                <span class="annotation-divider" aria-hidden="true"></span>
+                                <button class="annotation-tool" id="clearAnnotationsBtn" title="清空全部画笔痕迹" aria-label="清空全部画笔痕迹">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 10v6"/><path d="M14 10v6"/></svg>
+                                </button>
+                            </div>
+                            <button class="btn" id="annotationModeBtn" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m14.5 5.5 4 4"/><path d="M3 21l3.8-1 11.7-11.7a2.8 2.8 0 0 0-4-4L2.8 16 2 20.2Z"/></svg>
+                                画笔
+                            </button>
                             <button class="btn" id="fullscreenBtn">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
                                 全屏
@@ -1047,6 +1169,11 @@
         let liveIds = [];
         let replaceTarget = null;
         let modalSelected = new Set();
+        const annotationStrokes = new Map();
+        let annotationMode = false;
+        let drawingTool = "pen";
+        let drawingColor = "#f04438";
+        let activeStroke = null;
 
         const $ = (selector) => document.querySelector(selector);
         const classPicker = $("#classPicker");
@@ -1055,6 +1182,8 @@
         const screenGrid = $("#screenGrid");
         const viewerSummary = $("#viewerSummary");
         const fullscreenBtn = $("#fullscreenBtn");
+        const annotationModeBtn = $("#annotationModeBtn");
+        const annotationTools = $("#annotationTools");
         const toast = $("#toast");
         let isViewerFullscreen = false;
 
@@ -1174,6 +1303,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <canvas class="annotation-canvas" data-annotation-id="${student.id}" aria-label="${student.name}屏幕批注画布"></canvas>
                         </div>
                     </div>
                     <footer class="screen-footer">
@@ -1203,7 +1333,10 @@
             screenGrid.innerHTML = liveIds.length ? liveIds.map((id) => screenCard(students.find((student) => student.id === id))).join("") : emptyView();
 
             viewerSummary.innerHTML = liveIds.length ? `实时同步中 · <strong>${liveIds.length}</strong> 屏对比` : "等待选择学生";
+            annotationModeBtn.disabled = !liveIds.length;
+            if (!liveIds.length && annotationMode) setAnnotationMode(false);
             renderStudents();
+            window.requestAnimationFrame(syncAnnotationCanvases);
         }
 
         function setViewerFullscreen(nextState) {
@@ -1217,6 +1350,95 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
                 全屏
             `;
+            window.requestAnimationFrame(syncAnnotationCanvases);
+        }
+
+        function setAnnotationMode(nextState) {
+            annotationMode = Boolean(nextState && liveIds.length);
+            viewer.classList.toggle("annotating", annotationMode);
+            annotationModeBtn.classList.toggle("annotation-active", annotationMode);
+            annotationTools.classList.toggle("show", annotationMode);
+            annotationModeBtn.innerHTML = annotationMode ? `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+                退出画笔
+            ` : `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m14.5 5.5 4 4"/><path d="M3 21l3.8-1 11.7-11.7a2.8 2.8 0 0 0-4-4L2.8 16 2 20.2Z"/></svg>
+                画笔
+            `;
+        }
+
+        function setDrawingTool(tool) {
+            drawingTool = tool;
+            viewer.classList.toggle("eraser-active", drawingTool === "eraser");
+            document.querySelectorAll("[data-draw-tool]").forEach((button) => {
+                button.classList.toggle("active", button.dataset.drawTool === drawingTool);
+            });
+        }
+
+        function setDrawingColor(color) {
+            drawingColor = color;
+            setDrawingTool("pen");
+            document.querySelectorAll("[data-draw-color]").forEach((button) => {
+                button.classList.toggle("active", button.dataset.drawColor === drawingColor);
+            });
+        }
+
+        function canvasPoint(event, canvas) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)),
+                y: Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height))
+            };
+        }
+
+        function drawStroke(context, stroke, width, height) {
+            if (!stroke.points.length) return;
+            context.save();
+            context.globalCompositeOperation = stroke.tool === "eraser" ? "destination-out" : "source-over";
+            context.strokeStyle = stroke.color;
+            context.lineWidth = stroke.width * Math.min(width, height);
+            context.lineCap = "round";
+            context.lineJoin = "round";
+            context.beginPath();
+            const first = stroke.points[0];
+            context.moveTo(first.x * width, first.y * height);
+            stroke.points.slice(1).forEach((point) => context.lineTo(point.x * width, point.y * height));
+            if (stroke.points.length === 1) {
+                context.lineTo(first.x * width + 0.01, first.y * height + 0.01);
+            }
+            context.stroke();
+            context.restore();
+        }
+
+        function redrawAnnotationCanvas(canvas) {
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            const ratio = Math.min(window.devicePixelRatio || 1, 2);
+            const pixelWidth = Math.round(rect.width * ratio);
+            const pixelHeight = Math.round(rect.height * ratio);
+            if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+                canvas.width = pixelWidth;
+                canvas.height = pixelHeight;
+            }
+            const context = canvas.getContext("2d");
+            context.setTransform(ratio, 0, 0, ratio, 0, 0);
+            context.clearRect(0, 0, rect.width, rect.height);
+            const id = Number(canvas.dataset.annotationId);
+            (annotationStrokes.get(id) || []).forEach((stroke) => drawStroke(context, stroke, rect.width, rect.height));
+        }
+
+        function syncAnnotationCanvases() {
+            document.querySelectorAll(".annotation-canvas").forEach(redrawAnnotationCanvas);
+        }
+
+        function clearAllAnnotations() {
+            if (![...annotationStrokes.values()].some((strokes) => strokes.length)) {
+                showToast("当前没有画笔痕迹");
+                return;
+            }
+            liveIds.forEach((id) => annotationStrokes.delete(id));
+            syncAnnotationCanvases();
+            showToast("已清空画笔痕迹");
         }
 
         function endCurrentView() {
@@ -1226,12 +1448,14 @@
             }
             selected.clear();
             liveIds = [];
+            annotationStrokes.clear();
             renderScreens();
             showToast("已结束");
         }
 
         function removeLive(id) {
             selected.delete(id);
+            annotationStrokes.delete(id);
             renderScreens();
             showToast("已结束该学生屏幕");
         }
@@ -1282,6 +1506,7 @@
             }
             const nextId = ids[0];
             selected.delete(replaceTarget);
+            annotationStrokes.delete(replaceTarget);
             selected.add(nextId);
             showToast("已切换学生屏幕");
             closeModal();
@@ -1304,9 +1529,55 @@
                 showToast("该学生设备已关机");
                 return;
             }
-            selected.has(id) ? selected.delete(id) : selected.add(id);
+            if (selected.has(id)) {
+                selected.delete(id);
+                annotationStrokes.delete(id);
+            } else {
+                selected.add(id);
+            }
             renderScreens();
         });
+
+        screenGrid.addEventListener("pointerdown", (event) => {
+            const canvas = event.target.closest(".annotation-canvas");
+            if (!canvas || !annotationMode) return;
+            event.preventDefault();
+            const id = Number(canvas.dataset.annotationId);
+            const rect = canvas.getBoundingClientRect();
+            activeStroke = {
+                id,
+                pointerId: event.pointerId,
+                stroke: {
+                    tool: drawingTool,
+                    color: drawingColor,
+                    width: (drawingTool === "eraser" ? 24 : 4) / Math.min(rect.width, rect.height),
+                    points: [canvasPoint(event, canvas)]
+                }
+            };
+            const strokes = annotationStrokes.get(id) || [];
+            strokes.push(activeStroke.stroke);
+            annotationStrokes.set(id, strokes);
+            canvas.setPointerCapture(event.pointerId);
+            redrawAnnotationCanvas(canvas);
+        });
+
+        screenGrid.addEventListener("pointermove", (event) => {
+            const canvas = event.target.closest(".annotation-canvas");
+            if (!canvas || !activeStroke || event.pointerId !== activeStroke.pointerId) return;
+            event.preventDefault();
+            activeStroke.stroke.points.push(canvasPoint(event, canvas));
+            redrawAnnotationCanvas(canvas);
+        });
+
+        function finishAnnotationStroke(event) {
+            if (!activeStroke || event.pointerId !== activeStroke.pointerId) return;
+            const canvas = event.target.closest(".annotation-canvas");
+            if (canvas?.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+            activeStroke = null;
+        }
+
+        screenGrid.addEventListener("pointerup", finishAnnotationStroke);
+        screenGrid.addEventListener("pointercancel", finishAnnotationStroke);
 
         screenGrid.addEventListener("click", (event) => {
             const actionButton = event.target.closest("[data-action]");
@@ -1328,7 +1599,10 @@
             selectedClasses.has(id) ? selectedClasses.delete(id) : selectedClasses.add(id);
             const availableIds = new Set(availableStudents().map((student) => student.id));
             [...selected].forEach((studentId) => {
-                if (!availableIds.has(studentId)) selected.delete(studentId);
+                if (!availableIds.has(studentId)) {
+                    selected.delete(studentId);
+                    annotationStrokes.delete(studentId);
+                }
             });
             renderClassPicker();
             renderScreens();
@@ -1336,10 +1610,21 @@
 
         $("#endViewBtn").addEventListener("click", endCurrentView);
         fullscreenBtn.addEventListener("click", () => setViewerFullscreen(!isViewerFullscreen));
+        annotationModeBtn.addEventListener("click", () => setAnnotationMode(!annotationMode));
+        annotationTools.addEventListener("click", (event) => {
+            const toolButton = event.target.closest("[data-draw-tool]");
+            const colorButton = event.target.closest("[data-draw-color]");
+            if (toolButton) setDrawingTool(toolButton.dataset.drawTool);
+            if (colorButton) setDrawingColor(colorButton.dataset.drawColor);
+        });
+        $("#clearAnnotationsBtn").addEventListener("click", clearAllAnnotations);
         $("#searchInput").addEventListener("input", renderStudents);
+        window.addEventListener("resize", () => window.requestAnimationFrame(syncAnnotationCanvases));
 
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape" && isViewerFullscreen) {
+            if (event.key === "Escape" && annotationMode) {
+                setAnnotationMode(false);
+            } else if (event.key === "Escape" && isViewerFullscreen) {
                 setViewerFullscreen(false);
             }
         });
