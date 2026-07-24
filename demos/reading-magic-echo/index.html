@@ -927,6 +927,44 @@
         transform: rotate(-12deg);
     }
 
+    .reading-echo-note-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 18;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(252,252,252,0.74);
+    }
+
+    .reading-echo-note-overlay .reading-echo-end-card {
+        margin: 0;
+        transform: translateY(-8px) rotate(-1.4deg);
+    }
+
+    .reading-echo-note-overlay .reading-echo-end-card:active {
+        transform: translate(1px, -7px) rotate(-1.4deg);
+    }
+
+    .reading-echo-next-chapter {
+        position: absolute;
+        right: 42px;
+        bottom: 34px;
+        border: 1px solid rgba(0,0,0,0.58);
+        background: #fcfcfc;
+        color: #111;
+        padding: 10px 18px;
+        font-family: "Songti SC", serif;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.08);
+    }
+
+    .reading-echo-next-chapter:active {
+        transform: translate(1px, 1px);
+        box-shadow: 1px 1px 0 rgba(0,0,0,0.08);
+    }
+
     .reader-page-hint {
         position: absolute;
         right: 24px;
@@ -4035,10 +4073,13 @@
         function readingEchoEndCardHtml(title) {
             const echo = getReadingEchoForTitle(title);
             return `
-                <div class="reading-echo-end-card" onclick="event.stopPropagation(); openReadingEcho();">
-                    <div class="reading-echo-card-copy">${echo.prompt}</div>
-                    <div class="reading-echo-card-action">进入回响 <i class="fas fa-arrow-right"></i></div>
-                    <i class="fas fa-feather-alt reading-echo-card-mark"></i>
+                <div class="reading-echo-note-overlay" onclick="event.stopPropagation();">
+                    <div class="reading-echo-end-card" onclick="event.stopPropagation(); openReadingEcho();">
+                        <div class="reading-echo-card-copy">${echo.prompt}</div>
+                        <div class="reading-echo-card-action">进入回响 <i class="fas fa-arrow-right"></i></div>
+                        <i class="fas fa-feather-alt reading-echo-card-mark"></i>
+                    </div>
+                    <button class="reading-echo-next-chapter" onclick="event.stopPropagation(); goNextReadingChapter();">进入下一章</button>
                 </div>
             `;
         }
@@ -4054,6 +4095,7 @@
         let readerCurrentTitle = '';
         let readerCurrentPage = 1;
         let readerChapterOffset = 0;
+        let readingEchoNoteVisible = false;
 
         function openReadingEcho() {
             const overlay = document.getElementById('reading-echo-overlay');
@@ -4093,10 +4135,15 @@
             clearTimeout(readingEchoIdleTimer);
             clearReadingEchoTypeTimers();
             if (goNextChapter) {
-                readerChapterOffset += 1;
-                readerCurrentPage = 1;
-                generateMockContent(readerCurrentTitle);
+                goNextReadingChapter();
             }
+        }
+
+        function goNextReadingChapter() {
+            readingEchoNoteVisible = false;
+            readerChapterOffset += 1;
+            readerCurrentPage = 1;
+            generateMockContent(readerCurrentTitle);
         }
 
         function typeReadingEchoText(elementId, text, speed, revealOnStart) {
@@ -4293,6 +4340,7 @@
             readerCurrentTitle = title;
             readerCurrentPage = 1;
             readerChapterOffset = 0;
+            readingEchoNoteVisible = false;
             
             // 生成模拟内容
             generateMockContent(title);
@@ -4513,22 +4561,36 @@
 
         // 模拟翻页
         function prevPage() {
+            readingEchoNoteVisible = false;
             if (readerCurrentPage > 1) {
                 readerCurrentPage -= 1;
                 generateMockContent(readerCurrentTitle);
                 showToast('上一页');
+            } else if (readerChapterOffset > 0) {
+                readerChapterOffset -= 1;
+                readerCurrentPage = 2;
+                generateMockContent(readerCurrentTitle);
+                showToast('上一章末页');
             } else {
                 showToast('已经是第一页');
             }
         }
 
         function nextPage() {
+            if (readerCurrentPage >= 2 && !readingEchoNoteVisible) {
+                readingEchoNoteVisible = true;
+                generateMockContent(readerCurrentTitle);
+                showToast('本章回响');
+                return;
+            }
+
             if (readerCurrentPage < 2) {
+                readingEchoNoteVisible = false;
                 readerCurrentPage += 1;
                 generateMockContent(readerCurrentTitle);
                 showToast('下一页');
             } else {
-                showToast('已经是本章末尾');
+                showToast('可进入回响或下一章');
             }
         }
 
@@ -4591,8 +4653,14 @@
             const page = readerCurrentPage || 1;
             
             let html = '';
+            const appendReadingEchoNote = () => {
+                if (page === 2 && readingEchoNoteVisible) {
+                    html += readingEchoEndCardHtml(title);
+                }
+            };
 
             if (readerChapterOffset > 0) {
+                readingEchoNoteVisible = false;
                 if (title.includes('小王子')) {
                     html = `
                         <div class="reader-text">
@@ -4668,7 +4736,6 @@
                         <p>“建立关系？”</p>
                         <p>“当然，”狐狸说，“对我来说，你还只是一个小男孩，就像其他千万个小男孩一样。我不需要你，你也同样用不着我。”</p>
                         <p>“但是，如果你驯养了我，我们就会彼此需要。对我来说，你就是世界上唯一的小男孩；对你来说，我就是世界上唯一的狐狸。”</p>
-                        ${readingEchoEndCardHtml(title)}
                     </div>
                 `;
             } else if (title.includes('语文') || title.includes('教材')) {
@@ -4694,7 +4761,6 @@
                         <p>乘法是这样的：“早春二月”乘以“竹外桃花三两枝”，再乘以“春雨贵如油”，等于“春风又绿江南岸”。</p>
                         <p>在宇宙的这一边，雪是在冬天下的；那么，在宇宙的另一边，雪是在夏天下的吗？太阳从西边升起吗？石头会不会像花朵一样开放？</p>
                         <p>我趴在窗台上，看着浩瀚的星空。星光洒进我的眼睛，也把我的想象带到了很远很远的地方。</p>
-                        ${readingEchoEndCardHtml(title)}
                     </div>
                 `;
             } else {
@@ -4719,11 +4785,11 @@
                         <h2 style="text-align: center; margin-bottom: 40px; font-weight: bold;">第一章 · 末尾</h2>
                         <p>年轻的勇士终于停在山口。他回头看见来时的路，忽然明白，真正改变他的不是远方，而是一路上那些让他不得不重新思考的问题。</p>
                         <p>他把剑收回鞘中，继续向前走去。夜色落下来，前方的灯火像是在等待他回答什么。</p>
-                        ${readingEchoEndCardHtml(title)}
                     </div>
                 `;
             }
 
+            appendReadingEchoNote();
             contentDiv.innerHTML = html;
             const progress = document.getElementById('reader-progress');
             if (progress) progress.innerText = page === 1 ? '第 1 / 2 页 · 12:05' : '第 2 / 2 页 · 本章末尾';
