@@ -155,6 +155,44 @@
             font-size: 14px;
         }
 
+        .mode-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            border: 1px solid var(--line-strong);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.82);
+            box-shadow: 0 8px 24px rgba(24, 44, 74, 0.08);
+        }
+
+        .mode-option {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            height: 34px;
+            padding: 0 13px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 720;
+            cursor: pointer;
+        }
+
+        .mode-option svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .mode-option.active {
+            background: var(--blue);
+            color: #fff;
+            box-shadow: 0 5px 14px rgba(35, 120, 255, 0.2);
+        }
+
         .actions {
             display: flex;
             align-items: center;
@@ -299,6 +337,27 @@
             min-height: 320px;
             overflow: auto;
             padding: 0 16px 16px;
+        }
+
+        .student-list-empty {
+            min-height: 220px;
+            display: grid;
+            place-items: center;
+            padding: 28px 16px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .student-list-empty strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #344054;
+            font-size: 14px;
+        }
+
+        .student-list-empty span {
+            font-size: 12px;
+            line-height: 1.6;
         }
 
         .student-row {
@@ -930,6 +989,364 @@
             font-size: 13px;
         }
 
+        .experience-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        body.product-mode .experience-layout {
+            grid-template-columns: minmax(0, 1fr) 380px;
+            align-items: stretch;
+        }
+
+        body.product-mode .workspace {
+            grid-template-columns: 250px minmax(0, 1fr);
+            gap: 14px;
+            align-items: stretch;
+            height: calc(100vh - 206px);
+            min-height: 560px;
+        }
+
+        body.product-mode .workspace > .panel,
+        body.product-mode .product-detail {
+            height: calc(100vh - 206px);
+            min-height: 560px;
+            max-height: calc(100vh - 206px);
+        }
+
+        body.product-mode .workspace > aside.panel {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        body.product-mode .workspace > aside.panel .student-list {
+            flex: 1;
+            min-height: 0;
+            max-height: none;
+        }
+
+        body.product-mode .viewer {
+            overflow: auto;
+        }
+
+        body.product-mode [data-explain-highlight].explain-active {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 5px rgba(35, 120, 255, 0.08);
+        }
+
+        .product-detail {
+            position: sticky;
+            top: 18px;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 206px);
+            max-height: calc(100vh - 48px);
+            overflow: hidden;
+        }
+
+        .product-detail-head {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--line);
+            background:
+                linear-gradient(110deg, rgba(35, 120, 255, 0.08), rgba(255, 255, 255, 0) 48%),
+                #fff;
+        }
+
+        .product-detail-head h2 {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.3;
+        }
+
+        .product-detail-head p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .product-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            overflow: visible;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+            background: #fff;
+            scrollbar-width: none;
+        }
+
+        .product-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product-tab {
+            flex: 0 0 auto;
+            min-height: 30px;
+            padding: 0 11px;
+            border: 1px solid transparent;
+            border-radius: 16px;
+            background: #f2f4f7;
+            color: #475467;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .product-tab:hover {
+            background: #e8edf4;
+        }
+
+        .product-tab.active {
+            border-color: var(--blue);
+            background: var(--blue);
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(35, 120, 255, 0.24);
+        }
+
+        .detail-body {
+            flex: 1;
+            min-height: 0;
+            max-height: none;
+            padding: 0 20px 24px;
+            overflow: auto;
+        }
+
+        .module-overview {
+            padding: 20px 0 18px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .detail-eyebrow {
+            margin: 0 0 7px;
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .module-overview h3 {
+            margin: 0;
+            font-size: 19px;
+            line-height: 1.35;
+        }
+
+        .module-overview > p:last-child {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .function-description {
+            padding: 18px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .function-description h4 {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin: 0 0 9px;
+            font-size: 14px;
+        }
+
+        .function-description h4 svg {
+            width: 16px;
+            height: 16px;
+            color: var(--blue);
+        }
+
+        .function-description p {
+            margin: 0;
+            color: #344054;
+            font-size: 13px;
+            line-height: 1.75;
+        }
+
+        .prd-rule-list {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .prd-rule-list li {
+            position: relative;
+            padding-left: 16px;
+            color: #475467;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .prd-rule-list li::before {
+            content: "";
+            position: absolute;
+            top: 9px;
+            left: 0;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--blue);
+        }
+
+        .prd-rule-list strong {
+            color: #101828;
+            font-weight: 760;
+        }
+
+        .detail-section {
+            padding: 22px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .detail-section:last-child {
+            border-bottom: 0;
+        }
+
+        .detail-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 13px;
+            font-size: 16px;
+        }
+
+        .detail-section h3 svg {
+            width: 17px;
+            height: 17px;
+            color: var(--blue);
+        }
+
+        .feature-detail h3 {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .feature-copy + .feature-copy {
+            margin-top: 16px;
+        }
+
+        .feature-copy h4 {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin: 0 0 9px;
+            color: #344054;
+            font-size: 13px;
+        }
+
+        .feature-copy h4 svg {
+            width: 15px;
+            height: 15px;
+            color: var(--blue);
+        }
+
+        .detail-section > p {
+            margin: 0;
+            color: #344054;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .detail-list {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .detail-list li {
+            position: relative;
+            padding-left: 18px;
+            color: #344054;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .detail-list li::before {
+            content: "";
+            position: absolute;
+            top: 9px;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--blue);
+        }
+
+        .interaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .interaction-table th,
+        .interaction-table td {
+            padding: 11px 12px;
+            border: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .interaction-table th {
+            width: 27%;
+            background: #f7f9fc;
+            color: var(--ink);
+            font-weight: 750;
+        }
+
+        .boundary-note {
+            padding: 13px 15px;
+            border-left: 3px solid #f5b82e;
+            background: #fffbeb;
+            color: #5f4b18;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .product-guide {
+            display: grid;
+            place-items: center;
+            min-height: calc(100vh - 208px);
+            padding: 34px 26px;
+            text-align: center;
+        }
+
+        .product-guide-icon {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 16px;
+            border-radius: 8px;
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+
+        .product-guide-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .product-guide h2 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .product-guide p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.75;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -937,6 +1354,14 @@
         @media (max-width: 1180px) {
             .workspace {
                 grid-template-columns: 270px minmax(0, 1fr);
+            }
+
+            body.product-mode .experience-layout {
+                grid-template-columns: minmax(0, 1fr) 340px;
+            }
+
+            body.product-mode .workspace {
+                grid-template-columns: 220px minmax(0, 1fr);
             }
 
             .screen-grid.count-many {
@@ -983,6 +1408,19 @@
                 grid-template-columns: 1fr;
             }
 
+            body.product-mode .experience-layout,
+            body.product-mode .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            body.product-mode .workspace,
+            body.product-mode .workspace > .panel,
+            body.product-mode .product-detail {
+                height: auto;
+                min-height: 0;
+                max-height: none;
+            }
+
             .student-list {
                 max-height: none;
                 min-height: 0;
@@ -998,6 +1436,16 @@
 
             .modal .student-list {
                 grid-template-columns: 1fr;
+            }
+
+            .product-detail {
+                position: static;
+                min-height: 0;
+                max-height: none;
+            }
+
+            .detail-body {
+                max-height: none;
             }
         }
 
@@ -1051,12 +1499,24 @@
             <header class="topbar">
                 <div>
                     <h1>课堂调屏</h1>
-                    <div class="class-picker" id="classPicker" aria-label="班级选择"></div>
+                    <p class="subtitle hidden" id="modeDescription">点击右侧产品说明模块，左侧会高亮对应的 Demo 区域。</p>
+                    <div class="class-picker" id="classPicker" aria-label="班级选择" data-explain-highlight="class-switch"></div>
+                </div>
+                <div class="mode-switch" role="tablist" aria-label="页面模式">
+                    <button class="mode-option active" data-page-mode="demo" role="tab" aria-selected="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m8 5 11 7-11 7Z"/></svg>
+                        Demo
+                    </button>
+                    <button class="mode-option" data-page-mode="product" role="tab" aria-selected="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16v14H4Z"/><path d="M8 9h8"/><path d="M8 13h5"/></svg>
+                        产品说明
+                    </button>
                 </div>
             </header>
 
-            <section class="workspace">
-                <aside class="panel">
+            <div class="experience-layout">
+            <section class="workspace" id="demoWorkspace">
+                <aside class="panel" data-explain-highlight="student-list">
                     <div class="panel-head">
                         <h2 class="panel-title">选择学生</h2>
                     </div>
@@ -1067,7 +1527,7 @@
                     <div class="student-list" id="studentList" aria-label="可调取学生"></div>
                 </aside>
 
-                <section class="panel viewer">
+                <section class="panel viewer" data-explain-highlight="screen-view">
                     <div class="viewer-head">
                         <div class="viewer-meta">
                             <h2 class="panel-title">屏幕查看区</h2>
@@ -1108,6 +1568,9 @@
                     <div class="screen-grid count-0" id="screenGrid"></div>
                 </section>
             </section>
+
+                <aside class="panel product-detail hidden" id="productDetail" aria-live="polite"></aside>
+            </div>
         </main>
     </div>
 
@@ -1164,7 +1627,436 @@
             { id: 18, classId: "c3", name: "邵子涵", seat: "04", task: "课堂小测", page: "第 3 题", status: "停留 2 分钟", online: true, seed: 17 }
         ];
 
-        const selectedClasses = new Set(["c1"]);
+        const legacyProductModules = [
+            {
+                id: "entry-class",
+                title: "入口与班级范围",
+                summary: "快速进入，按班级确定学生范围",
+                goal: "老师进入课堂调屏后，应立即看到可操作的学生范围，不经过引导页或额外的开始步骤。",
+                logic: [
+                    "入口位于教师网页端“墨水屏”模块下，进入后直接加载课堂调屏工作区。",
+                    "优先默认选中当前课程对应班级；无法识别时使用最近一次选择的班级。",
+                    "支持同时选择一个或多个有权限的班级，学生列表随班级选择实时合并更新。",
+                    "至少保留一个班级；取消班级时，该班正在查看的学生同步退出。"
+                ],
+                interactions: [
+                    ["进入页面", "自动加载默认班级与学生列表，右侧保持未查看空状态。"],
+                    ["点击未选班级", "班级高亮，列表增加该班学生。"],
+                    ["取消已选班级", "列表移除该班学生，并结束该班学生的屏幕查看。"],
+                    ["取消最后一个班级", "不执行取消，提示“至少保留一个班级”。"]
+                ],
+                boundary: "仅展示老师有授课或管理权限的班级；本功能没有预设小组或跨班“关注名单”。"
+            },
+            {
+                id: "student-select",
+                title: "学生选择",
+                summary: "点谁看谁，支持连续多选",
+                goal: "把调取学生屏幕压缩为一次点击，让老师在授课过程中可以快速、低打扰地查看任意学生。",
+                logic: [
+                    "默认展示所选班级的全部学生，学生行只保留姓名、班级和必要的设备状态。",
+                    "点击在线学生后立即开始连接屏幕，不再设置“开始调屏”或“查看所选屏幕”按钮。",
+                    "老师可连续点击多名学生形成多屏对比，再次点击已选学生即可取消。",
+                    "支持按姓名搜索，搜索范围限定在当前所选班级。"
+                ],
+                interactions: [
+                    ["点击在线学生", "学生行进入选中态，右侧立即出现该学生屏幕。"],
+                    ["再次点击已选学生", "结束该学生屏幕，列表取消选中。"],
+                    ["点击关机学生", "不发起连接，提示“该学生设备已关机”。"],
+                    ["输入姓名", "列表实时过滤；清空搜索后恢复完整名单。"]
+                ],
+                boundary: "学生列表不展示头像、座位号、当前题号、任务名称或作答状态，避免把简单选择器做成学情列表。"
+            },
+            {
+                id: "screen-view",
+                title: "单屏与多屏查看",
+                summary: "自动布局，支持横向对比",
+                goal: "老师既可以放大观察一名学生，也可以并排比较多名学生是否跟上当前任务。",
+                logic: [
+                    "学生墨水屏始终按 7:9 宽高比等比展示，不拉伸、不裁切核心内容。",
+                    "单屏时画面居中并尽可能放大；多屏时根据屏幕数量和可用宽度自动排布。",
+                    "2 屏并排，3-4 屏采用两列，更多屏幕按可用宽度自动排列。",
+                    "系统只提供自动布局，不向老师暴露“聚焦/平铺”等额外选择。"
+                ],
+                interactions: [
+                    ["选择 1 名学生", "查看区展示单个大画面，顶部仅显示学生姓名。"],
+                    ["继续选择学生", "新画面加入，原有画面自动缩放并重新排布。"],
+                    ["结束任意屏幕", "剩余画面自动补位，不改变其他学生查看状态。"],
+                    ["窗口尺寸变化", "全部画面保持 7:9 比例并重新适配。"]
+                ],
+                boundary: "查看区仅用小型文案提示“实时同步中 · N 屏对比”，不增加大块指标卡或推断性学情信息。"
+            },
+            {
+                id: "screen-actions",
+                title: "增加、切换与结束",
+                summary: "灵活调整当前查看对象",
+                goal: "老师在查看过程中可以快速调整学生组合，而不必退出当前任务或重新开始。",
+                logic: [
+                    "增加学生直接通过左侧名单完成，不设置独立的“继续添加”按钮。",
+                    "每个学生屏幕提供“切换学生”和“结束此屏”两个轻量操作。",
+                    "切换时仅展示当前班级范围内、在线且尚未在查看中的学生。",
+                    "查看区顶部提供统一“结束”，用于一次结束全部屏幕。"
+                ],
+                interactions: [
+                    ["切换学生", "弹出学生选择层；确认后新学生在原位置替换旧学生。"],
+                    ["结束此屏", "仅移除当前学生，左侧取消选中，剩余屏幕重新排布。"],
+                    ["点击“结束”", "结束全部查看、取消全部选中并清空临时批注。"],
+                    ["无正在查看屏幕", "结束按钮不产生状态变化，并提示当前没有正在查看的屏幕。"]
+                ],
+                boundary: "切换学生不会影响其他正在查看的学生，也不会改变当前选择的班级范围。"
+            },
+            {
+                id: "fullscreen",
+                title: "全屏查看",
+                summary: "放大右侧查看区，保留全部操作",
+                goal: "在需要细看书写内容或进行多人对比时，充分利用教师电脑屏幕空间。",
+                logic: [
+                    "全屏对象为右侧整个屏幕查看区，而不是浏览器原生全屏。",
+                    "全屏状态保留学生姓名、画面、画笔工具、单屏操作和结束按钮。",
+                    "进入或退出全屏时，学生选择、画面顺序和临时批注保持不变。",
+                    "所有学生画面和批注按照同一比例重绘，避免画笔错位。"
+                ],
+                interactions: [
+                    ["点击“全屏”", "查看区覆盖当前页面，按钮切换为“退出全屏”。"],
+                    ["点击“退出全屏”", "恢复常规页面布局。"],
+                    ["按 Esc", "若处于画笔模式先退出画笔；再次按 Esc 退出全屏。"],
+                    ["全屏中增加/结束学生", "画面在全屏区域内自动重新排布。"]
+                ],
+                boundary: "全屏只改变教师端查看布局，不影响学生设备，也不会自动投放到教室大屏。"
+            },
+            {
+                id: "annotation",
+                title: "画笔批注",
+                summary: "在学生画面上临时圈点",
+                goal: "老师可以直接在实时画面上圈出重点、对比差异或标记问题，辅助课堂中的即时判断和讲解。",
+                logic: [
+                    "至少存在一个学生屏幕时画笔按钮才可用；进入后展开完整工具条。",
+                    "每个学生屏幕拥有独立批注层，多屏之间的笔迹互不影响。",
+                    "提供红、蓝、黑、黄四种画笔颜色、橡皮擦和一键清空。",
+                    "批注按屏幕比例保存，全屏或尺寸变化后仍与原画面保持对齐。"
+                ],
+                interactions: [
+                    ["进入画笔", "按钮变为“退出画笔”，屏幕画面可直接书写。"],
+                    ["选择颜色", "切换颜色并自动回到画笔工具，已有笔迹不改变。"],
+                    ["使用橡皮擦", "仅擦除老师批注，不影响学生原始画面。"],
+                    ["点击清空", "清空当前正在查看的全部学生屏幕批注。"],
+                    ["切换/结束学生", "清除被替换或结束学生的批注。"]
+                ],
+                boundary: "批注仅存在于当前教师端会话，不同步到学生设备、不保存为学习记录，也不修改学生原始屏幕内容。"
+            },
+            {
+                id: "states",
+                title: "状态与异常",
+                summary: "让老师始终知道发生了什么",
+                goal: "网络或设备状态不稳定时，给老师明确、可恢复的反馈，避免把连接问题误判为学生操作问题。",
+                logic: [
+                    "未选择学生时展示清晰空状态，说明可从左侧选择一名或多名学生。",
+                    "建立连接期间，对应屏幕展示“正在连接”而不是空白区域。",
+                    "连接中断时保留最后一帧，并提示“连接中断，正在重连”。",
+                    "重连失败后提供重试和结束此屏，不影响其他学生画面。"
+                ],
+                interactions: [
+                    ["设备关机", "列表展示“关机”标签，学生不可选。"],
+                    ["屏幕连接中", "展示加载态，连接成功后自动切换实时画面。"],
+                    ["临时断线", "保留最后一帧并自动重连。"],
+                    ["重连失败", "展示失败说明，可手动重试或结束该屏。"],
+                    ["达到并发上限", "提示先结束一个屏幕后再添加。"]
+                ],
+                boundary: "单个学生连接异常不得中断其他学生查看，也不得清空老师在其他屏幕上的批注。"
+            },
+            {
+                id: "privacy",
+                title: "权限与隐私",
+                summary: "限定查看范围，保持过程透明",
+                goal: "在满足课堂管理需要的同时，确保老师只能查看授权学生，并让学生明确感知设备正在被查看。",
+                logic: [
+                    "老师仅可查看其有授课或管理权限班级内的学生设备。",
+                    "服务端校验教师、班级、学生和设备的关联关系，不能只依赖前端过滤。",
+                    "学生屏幕被查看期间，学生端显示轻量提示“老师正在查看本屏幕”。",
+                    "结束查看或连接断开后，学生端提示立即消失。"
+                ],
+                interactions: [
+                    ["开始查看成功", "教师端出现实时画面，学生端出现轻量被查看提示。"],
+                    ["结束单屏/全部", "连接释放，学生端提示消失。"],
+                    ["无班级权限", "教师端不展示对应班级与学生。"],
+                    ["操作审计", "记录教师、学生、开始/结束时间和异常原因，不记录屏幕内容。"]
+                ],
+                boundary: "本期默认不录制、不截图留存、不传输学生音频；老师画笔批注仅在教师端可见。"
+            }
+        ];
+
+        const previousProductModules = [
+            {
+                id: "selection",
+                title: "班级与学生选择",
+                summary: "确定可查看范围，并通过一次点击调取任意学生屏幕。",
+                features: [
+                    {
+                        title: "班级范围",
+                        logic: [
+                            "默认展示老师当前授课班级；无法识别当前课堂时，展示最近一次使用的班级。",
+                            "支持同时选择一个或多个有权限的班级，学生名单按已选班级实时合并。",
+                            "至少保留一个班级；仅展示老师有授课或管理权限的班级。"
+                        ],
+                        interaction: [
+                            "点击班级完成选中或取消，学生列表随选择立即更新。",
+                            "取消某个班级时，该班正在查看的学生同步退出；取消最后一个班级时提示至少保留一个班级。"
+                        ]
+                    },
+                    {
+                        title: "学生名单与设备状态",
+                        logic: [
+                            "默认展示已选班级的全部学生，单行只显示姓名、班级和必要的设备状态。",
+                            "在线学生可调取；关机学生显示“关机”标签，不展示头像、座位号、任务或作答进度。",
+                            "搜索仅在当前已选班级范围内按学生姓名匹配。"
+                        ],
+                        interaction: [
+                            "输入姓名时列表实时过滤，清空搜索后恢复完整名单。",
+                            "点击在线学生后立即连接并在右侧展示屏幕；点击关机学生不发起连接并给予提示。"
+                        ]
+                    },
+                    {
+                        title: "单选与多选",
+                        logic: [
+                            "选中状态与右侧正在查看的屏幕一一对应，不设置额外的“开始调屏”确认步骤。",
+                            "支持连续选择多名学生，形成临时对比组合。"
+                        ],
+                        interaction: [
+                            "点击未选学生即加入查看；再次点击已选学生即结束该学生屏幕。",
+                            "选中或取消后，左右两侧状态同步更新。"
+                        ]
+                    }
+                ],
+                boundary: "本功能没有预设小组、固定分组或“需关注学生”名单，老师始终从班级完整名单中自由选择。"
+            },
+            {
+                id: "viewing",
+                title: "屏幕查看与管理",
+                summary: "实时查看一个或多个学生屏幕，并在课堂中灵活调整查看对象。",
+                features: [
+                    {
+                        title: "实时屏幕与自动布局",
+                        logic: [
+                            "每个学生屏幕仅显示学生姓名和实时画面，画面始终按 7:9 宽高比等比展示。",
+                            "单屏时尽可能放大居中；多屏时按数量和可用空间自动排列，不提供额外布局选择。",
+                            "查看区仅用轻量状态提示当前同步屏幕数，不增加大块数据指标。"
+                        ],
+                        interaction: [
+                            "选择第一名学生后出现单个画面；继续选择时已有画面自动缩放并重新排布。",
+                            "窗口尺寸变化或屏幕数量变化时自动适配，画面不拉伸、不裁切核心内容。"
+                        ]
+                    },
+                    {
+                        title: "增加、切换与结束",
+                        logic: [
+                            "增加学生统一从左侧名单完成；每个屏幕提供切换学生和结束此屏操作。",
+                            "切换候选人限定为已选班级内、在线且当前未在查看的学生。",
+                            "顶部“结束”用于一次结束全部屏幕，并清除本次临时批注。"
+                        ],
+                        interaction: [
+                            "点击切换后弹出学生选择层，确认后新学生在原位置替换旧学生，不影响其他屏幕。",
+                            "点击结束此屏只移除当前学生；点击顶部结束则取消全部选中并回到空状态。"
+                        ]
+                    },
+                    {
+                        title: "全屏查看",
+                        logic: [
+                            "全屏对象是右侧完整查看区域，保留学生姓名、画面和全部操作。",
+                            "进入或退出全屏不改变学生组合、画面顺序和临时批注。"
+                        ],
+                        interaction: [
+                            "点击全屏后查看区覆盖页面，按钮切换为退出全屏；再次点击或按 Esc 还原。",
+                            "全屏期间仍可切换、结束学生和使用画笔。"
+                        ]
+                    },
+                    {
+                        title: "状态与异常",
+                        logic: [
+                            "未选择学生时展示操作提示；连接中、断线重连和重连失败分别展示明确状态。",
+                            "单个学生异常只影响对应屏幕，其他学生画面继续同步。"
+                        ],
+                        interaction: [
+                            "临时断线时保留最后一帧并自动重连；失败后允许老师重试或结束该屏。",
+                            "达到并发上限时提示先结束一个屏幕后再继续添加。"
+                        ]
+                    }
+                ],
+                boundary: "屏幕查看不录制、不截图留存，也不默认传输学生设备声音；学生端应以轻量提示告知屏幕正在被老师查看。"
+            },
+            {
+                id: "annotation",
+                title: "课堂圈画",
+                summary: "老师直接在学生实时画面上圈点、标记和擦除，辅助即时讲解。",
+                features: [
+                    {
+                        title: "进入画笔模式",
+                        logic: [
+                            "至少存在一个正在查看的学生屏幕时，画笔按钮才可用。",
+                            "进入后在实时画面之上增加独立批注层，不修改学生原始屏幕内容。"
+                        ],
+                        interaction: [
+                            "点击画笔进入圈画状态，按钮切换为退出画笔并展开完整工具栏。",
+                            "再次点击画笔或按 Esc 退出，已有笔迹保留。"
+                        ]
+                    },
+                    {
+                        title: "画笔与颜色",
+                        logic: [
+                            "提供红、蓝、黑、黄四种颜色；每个学生屏幕拥有独立笔迹数据。",
+                            "笔迹按画面比例记录，全屏或布局变化后重新绘制并保持位置对应。"
+                        ],
+                        interaction: [
+                            "点击颜色立即切换画笔颜色，并自动回到画笔工具。",
+                            "老师可在任意正在查看的学生画面上连续书写，多屏笔迹互不影响。"
+                        ]
+                    },
+                    {
+                        title: "橡皮擦与清空",
+                        logic: [
+                            "橡皮擦只作用于教师批注层；清空作用于当前正在查看的全部学生屏幕批注。",
+                            "切换或结束某名学生时，仅删除该学生对应的临时笔迹。"
+                        ],
+                        interaction: [
+                            "选择橡皮擦后在画面上擦除局部笔迹，不影响学生原始内容。",
+                            "点击清空后一次移除当前查看组合的全部批注。"
+                        ]
+                    }
+                ],
+                boundary: "批注仅存在于当前教师端会话，不同步到学生设备、不进入学习档案，也不作为学生作答内容保存。"
+            }
+        ];
+
+        const productModules = [
+            {
+                id: "class-switch",
+                title: "顶部班级切换",
+                description: "用于确定本次课堂调屏可选择的学生范围。老师可以选择一个或多个有权限的班级，学生列表与正在查看的屏幕会随班级范围同步更新。",
+                subfeatures: [
+                    {
+                        title: "班级默认展示",
+                        rules: [
+                            ["默认展示", "默认选中老师上一次选择的班级；没有历史选择记录时，默认选中班级列表中的第一个班级。"],
+                            ["展示数据", "展示老师有任教关系的班级。"],
+                            ["选中状态", "已选班级展示选中态；支持同时选中多个班级。"]
+                        ]
+                    },
+                    {
+                        title: "班级选择与取消",
+                        rules: [
+                            ["交互操作", "点击未选班级将其加入当前范围；再次点击已选班级将其移出当前范围。"],
+                            ["联动逻辑", "班级范围变化后，学生列表立即合并展示全部已选班级学生。"],
+                            ["查看联动", "取消某个班级时，该班正在查看的学生屏幕同步结束，其他班级学生不受影响。"],
+                            ["空状态", "未选中任何班级时，学生列表展示空状态，提示老师先选择班级。"]
+                        ]
+                    }
+                ],
+                boundary: "本功能只控制老师可选择的班级范围，不提供预设小组、固定分组或跨班关注名单。"
+            },
+            {
+                id: "student-list",
+                title: "学生列表",
+                description: "展示当前已选班级中的学生名单及必要设备状态。老师可通过搜索和点选，快速调取一个或多个学生的墨水屏画面。",
+                subfeatures: [
+                    {
+                        title: "学生名单展示",
+                        rules: [
+                            ["默认展示", "进入页面后展示当前已选班级的完整学生名单。多选班级时，合并展示各班学生。"],
+                            ["展示数据", "每名学生展示姓名和所属班级。"],
+                            ["设备状态", "在线设备不额外展示状态；关机设备展示“关机”标签并置为不可调取状态。"],
+                            ["排序规则", "学生名单按学生 ID 升序排列。"]
+                        ]
+                    },
+                    {
+                        title: "搜索学生",
+                        rules: [
+                            ["入口展示", "学生列表顶部常驻姓名搜索框。"],
+                            ["占位文案", "搜索框占位文案为“搜索学生姓名”。"],
+                            ["匹配逻辑", "输入后在当前已选班级范围内按姓名实时模糊匹配，不搜索班级名称或其他学生信息。"],
+                            ["空结果", "无匹配学生时展示“未找到相关学生”，清空搜索内容后恢复完整名单。"]
+                        ]
+                    },
+                    {
+                        title: "选择学生",
+                        rules: [
+                            ["交互操作", "点击在线学生后立即发起屏幕连接。"],
+                            ["多选逻辑", "支持连续选择多名学生；每次新增学生后，右侧画面自动重新排布。"],
+                            ["选中状态", "正在查看的学生行显示选中态；再次点击该学生即结束此屏并取消选中。"],
+                            ["关机设备", "点击关机学生不发起连接，并提示“该学生设备已关机”。"]
+                        ]
+                    }
+                ],
+                boundary: "学生列表只承担选择查看对象的职责，不在列表中承载学情分析、关注标记或课堂表现判断。"
+            },
+            {
+                id: "screen-view",
+                title: "屏幕查看区",
+                description: "实时展示一个或多个学生的墨水屏画面，并提供切换、结束、全屏和屏幕批注等查看过程中的操作。",
+                subfeatures: [
+                    {
+                        title: "未查看空状态",
+                        rules: [
+                            ["默认展示", "尚未选择学生时，查看区展示空状态，不展示虚假的示例屏幕或数据指标。"],
+                            ["标题文案", "空状态标题为“请先选择要查看的学生”。"]
+                        ]
+                    },
+                    {
+                        title: "学生屏幕与自动布局",
+                        rules: [
+                            ["展示数据", "每张屏幕卡片顶部仅展示学生姓名，主体展示实时墨水屏画面，底部展示“实时画面”状态。"],
+                            ["画面尺寸", "学生屏幕始终按照设备真实尺寸比例展示。"],
+                            ["布局规则", "单屏居中放大；双屏并排；三屏及以上根据可用宽度自动排列，不向老师提供额外布局选择。"],
+                            ["数量提示", "查看区标题旁以轻量文案展示“实时同步中 · N 屏对比”。"]
+                        ]
+                    },
+                    {
+                        title: "切换与结束学生",
+                        rules: [
+                            ["切换学生", "点击单个屏幕的切换按钮后打开学生选择弹层，展示当前班级范围内尚未查看的学生；关机学生保留展示但不可选中。"],
+                            ["替换逻辑", "确认新学生后，在原屏幕位置完成替换，不改变其他学生屏幕顺序。"],
+                            ["结束此屏", "点击单屏关闭按钮只结束该学生画面，并同步取消左侧学生选中状态。"],
+                            ["结束全部", "点击查看区顶部“结束”，一次结束全部屏幕、取消全部学生选中并清除临时批注。"]
+                        ]
+                    },
+                    {
+                        title: "全屏查看",
+                        rules: [
+                            ["入口展示", "查看区顶部常驻“全屏”按钮。"],
+                            ["交互操作", "点击后右侧完整屏幕查看区覆盖当前页面，按钮切换为“退出全屏”；再次点击或按 Esc 还原。"],
+                            ["状态保留", "进入和退出全屏不改变学生组合、屏幕顺序及已有批注。"]
+                        ]
+                    },
+                    {
+                        title: "屏幕批注",
+                        rules: [
+                            ["默认状态", "没有正在查看的学生时画笔按钮不可用；存在学生屏幕后按钮恢复可用。"],
+                            ["工具展示", "进入画笔模式后展示画笔、橡皮擦、红蓝黑黄四色和清空工具。"],
+                            ["交互操作", "老师可直接在任意学生画面上书写；颜色切换后继续使用画笔，橡皮擦仅擦除教师批注。"],
+                            ["数据逻辑", "每个学生屏幕独立保存临时笔迹；布局或全屏变化后按比例重绘。切换或结束学生时清除该学生笔迹。"],
+                            ["保存范围", "批注仅保留在当前教师端会话，不同步至学生设备。"]
+                        ]
+                    },
+                    {
+                        title: "连接状态与异常",
+                        rules: [
+                            ["连接中", "屏幕连接建立期间显示“正在连接”，成功后自动切换为实时画面。"],
+                            ["临时断线", "保留最后一帧并提示“连接中断，正在重连”，其他学生画面继续同步。"],
+                            ["重连失败", "展示失败说明，并提供重新连接或结束此屏操作。"],
+                            ["隐私提示", "学生屏幕被查看期间，学生端应展示轻量提示；结束查看后提示立即消失。"]
+                        ]
+                    }
+                ],
+                boundary: "本期屏幕查看不录制、不自动截图留存，也不默认传输学生设备声音。"
+            }
+        ];
+
+        const storedClassIds = (() => {
+            try {
+                const value = JSON.parse(localStorage.getItem("screen-viewer-class-ids") || "[]");
+                return Array.isArray(value) ? value.filter((id) => classes.some((item) => item.id === id)) : [];
+            } catch {
+                return [];
+            }
+        })();
+        const selectedClasses = new Set(storedClassIds.length ? storedClassIds : [classes[0].id]);
         const selected = new Set();
         let liveIds = [];
         let replaceTarget = null;
@@ -1174,6 +2066,8 @@
         let drawingTool = "pen";
         let drawingColor = "#f04438";
         let activeStroke = null;
+        let pageMode = "demo";
+        let activeProductModule = null;
 
         const $ = (selector) => document.querySelector(selector);
         const classPicker = $("#classPicker");
@@ -1184,6 +2078,8 @@
         const fullscreenBtn = $("#fullscreenBtn");
         const annotationModeBtn = $("#annotationModeBtn");
         const annotationTools = $("#annotationTools");
+        const demoWorkspace = $("#demoWorkspace");
+        const productDetail = $("#productDetail");
         const toast = $("#toast");
         let isViewerFullscreen = false;
 
@@ -1200,7 +2096,9 @@
         }
 
         function availableStudents() {
-            return students.filter((student) => selectedClasses.has(student.classId));
+            return students
+                .filter((student) => selectedClasses.has(student.classId))
+                .sort((a, b) => a.id - b.id);
         }
 
         function filteredStudents(source = availableStudents(), query = "") {
@@ -1209,6 +2107,87 @@
                 const hitKeyword = !keyword || student.name.toLowerCase().includes(keyword);
                 return hitKeyword;
             });
+        }
+
+        function detailIcon(type) {
+            const icons = {
+                target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M22 12h-3"/>',
+                logic: '<path d="M8 6h12"/><path d="M8 12h12"/><path d="M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',
+                interaction: '<path d="M9 11 12 8l3 3"/><path d="M12 8v8"/><rect x="3" y="3" width="18" height="18" rx="3"/>',
+                boundary: '<path d="M12 3 2 20h20Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>'
+            };
+            return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">${icons[type]}</svg>`;
+        }
+
+        function renderProductDetail() {
+            const module = productModules.find((item) => item.id === activeProductModule);
+            document.querySelectorAll("[data-explain-highlight]").forEach((element) => {
+                element.classList.toggle("explain-active", element.dataset.explainHighlight === activeProductModule);
+            });
+            if (!module) {
+                return;
+            }
+            const index = productModules.findIndex((item) => item.id === module.id) + 1;
+            productDetail.innerHTML = `
+                <div class="product-detail-head">
+                    <h2>课堂调屏产品说明</h2>
+                    <p>选择模块查看功能说明，Demo 对应区域会同步高亮。</p>
+                </div>
+                <div class="product-tabs" role="tablist" aria-label="产品说明模块">
+                    ${productModules.map((item) => `
+                        <button class="product-tab ${item.id === activeProductModule ? "active" : ""}" data-product-tab="${item.id}" role="tab" aria-selected="${item.id === activeProductModule}">
+                            ${item.title}
+                        </button>
+                    `).join("")}
+                </div>
+                <div class="detail-body">
+                    <div class="module-overview">
+                        <p class="detail-eyebrow">MODULE ${String(index).padStart(2, "0")}</p>
+                        <h3>${module.title}</h3>
+                    </div>
+                    <div class="function-description">
+                        <h4>${detailIcon("target")}功能描述</h4>
+                        <p>${module.description}</p>
+                    </div>
+                    ${module.subfeatures.map((feature) => `
+                        <section class="detail-section feature-detail">
+                            <h3>${feature.title}</h3>
+                            <ul class="prd-rule-list">
+                                ${feature.rules.map(([label, content]) => `<li><strong>${label}：</strong>${content}</li>`).join("")}
+                            </ul>
+                        </section>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function setPageMode(nextMode) {
+            pageMode = nextMode;
+            const isProductMode = pageMode === "product";
+            if (isProductMode) {
+                closeModal();
+                if (annotationMode) setAnnotationMode(false);
+                if (isViewerFullscreen) setViewerFullscreen(false);
+                activeProductModule = productModules[0].id;
+            }
+            demoWorkspace.classList.remove("hidden");
+            productDetail.classList.toggle("hidden", !isProductMode);
+            document.body.classList.toggle("product-mode", isProductMode);
+            $("#modeDescription").classList.toggle("hidden", !isProductMode);
+            document.querySelectorAll("[data-page-mode]").forEach((button) => {
+                const active = button.dataset.pageMode === pageMode;
+                button.classList.toggle("active", active);
+                button.setAttribute("aria-selected", String(active));
+            });
+            if (isProductMode) {
+                annotationModeBtn.disabled = !liveIds.length;
+                renderProductDetail();
+            } else {
+                annotationModeBtn.disabled = !liveIds.length;
+                activeProductModule = null;
+                renderProductDetail();
+                window.requestAnimationFrame(syncAnnotationCanvases);
+            }
         }
 
         function renderClassPicker() {
@@ -1221,7 +2200,32 @@
 
         function renderStudents() {
             const query = $("#searchInput").value;
-            studentList.innerHTML = filteredStudents(availableStudents(), query).map((student) => {
+            const searchInput = $("#searchInput");
+            searchInput.disabled = selectedClasses.size === 0;
+            if (!selectedClasses.size) {
+                studentList.innerHTML = `
+                    <div class="student-list-empty">
+                        <div>
+                            <strong>请先选择班级</strong>
+                            <span>选择班级后，这里将展示对应的学生名单。</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            const visibleStudents = filteredStudents(availableStudents(), query);
+            if (!visibleStudents.length) {
+                studentList.innerHTML = `
+                    <div class="student-list-empty">
+                        <div>
+                            <strong>未找到相关学生</strong>
+                            <span>请尝试更换姓名关键词。</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            studentList.innerHTML = visibleStudents.map((student) => {
                 const isSelected = selected.has(student.id);
                 const isLive = liveIds.includes(student.id);
                 const isOffline = !student.online;
@@ -1320,8 +2324,7 @@
                         <div class="empty-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6"/><path d="M9 12h6"/><path d="M9 17h4"/></svg>
                         </div>
-                        <h2>请选择要查看的学生屏幕</h2>
-                        <p>老师可在左侧学生列表中点击任意学生，右侧会立即显示该学生的墨水屏实时画面；选择多名学生时，会自动并排展示，方便课堂中快速对比。</p>
+                        <h2>请先选择要查看的学生</h2>
                     </div>
                 </div>
             `;
@@ -1481,16 +2484,18 @@
             const list = availableStudents().filter((student) => {
                 const notCurrent = student.id !== replaceTarget && !selected.has(student.id);
                 const hit = !query || student.name.toLowerCase().includes(query);
-                return notCurrent && hit && student.online;
+                return notCurrent && hit;
             });
             $("#modalList").innerHTML = list.map((student) => {
                 const active = modalSelected.has(student.id);
+                const isOffline = !student.online;
                 return `
-                    <button class="student-row ${active ? "selected" : ""}" data-modal-id="${student.id}">
+                    <button class="student-row ${active ? "selected" : ""} ${isOffline ? "offline" : ""}" data-modal-id="${student.id}" ${isOffline ? "disabled" : ""}>
                         <span>
                             <span class="student-name">${student.name}</span>
                             <span class="student-meta">${classNameOf(student.classId)}</span>
                         </span>
+                        ${isOffline ? '<span class="student-status offline">关机</span>' : ""}
                     </button>
                 `;
             }).join("");
@@ -1592,11 +2597,16 @@
             const button = event.target.closest("[data-class-id]");
             if (!button) return;
             const id = button.dataset.classId;
-            if (selectedClasses.has(id) && selectedClasses.size === 1) {
-                showToast("至少保留一个班级");
-                return;
-            }
             selectedClasses.has(id) ? selectedClasses.delete(id) : selectedClasses.add(id);
+            try {
+                if (selectedClasses.size) {
+                    localStorage.setItem("screen-viewer-class-ids", JSON.stringify([...selectedClasses]));
+                } else {
+                    localStorage.removeItem("screen-viewer-class-ids");
+                }
+            } catch {
+                // Storage may be unavailable in restricted browser contexts.
+            }
             const availableIds = new Set(availableStudents().map((student) => student.id));
             [...selected].forEach((studentId) => {
                 if (!availableIds.has(studentId)) {
@@ -1620,6 +2630,19 @@
         $("#clearAnnotationsBtn").addEventListener("click", clearAllAnnotations);
         $("#searchInput").addEventListener("input", renderStudents);
         window.addEventListener("resize", () => window.requestAnimationFrame(syncAnnotationCanvases));
+        document.querySelector(".mode-switch").addEventListener("click", (event) => {
+            const button = event.target.closest("[data-page-mode]");
+            if (!button) return;
+            setPageMode(button.dataset.pageMode);
+        });
+        productDetail.addEventListener("click", (event) => {
+            const tab = event.target.closest("[data-product-tab]");
+            if (!tab) return;
+            activeProductModule = tab.dataset.productTab;
+            renderProductDetail();
+            const target = document.querySelector(`[data-explain-highlight="${activeProductModule}"]`);
+            target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
 
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape" && annotationMode) {
@@ -1640,6 +2663,7 @@
             const row = event.target.closest("[data-modal-id]");
             if (!row) return;
             const id = Number(row.dataset.modalId);
+            if (!students.find((student) => student.id === id)?.online) return;
             modalSelected = new Set([id]);
             renderModalList();
         });
@@ -1647,6 +2671,7 @@
         renderClassPicker();
         renderStudents();
         renderScreens();
+        renderProductDetail();
     </script>
 </body>
 </html>
