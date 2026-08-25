@@ -440,6 +440,12 @@
             color: #667085;
         }
 
+        .student-status.lan-blocked {
+            background: #fff5e8;
+            color: #b54708;
+            cursor: help;
+        }
+
         .viewer {
             min-height: calc(100vh - 206px);
             padding: 16px;
@@ -1607,24 +1613,24 @@
         ];
 
         const students = [
-            { id: 1, classId: "c1", name: "陈雨桐", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, seed: 0 },
-            { id: 2, classId: "c1", name: "李嘉言", seat: "02", task: "课堂小测", page: "第 3 题", status: "停留 2 分钟", online: true, seed: 1 },
-            { id: 3, classId: "c1", name: "周子墨", seat: "03", task: "教材同步", page: "P36", status: "阅读中", online: true, seed: 2 },
-            { id: 4, classId: "c1", name: "林若曦", seat: "04", task: "课堂小测", page: "第 2 题", status: "已提交", online: true, seed: 3 },
-            { id: 5, classId: "c1", name: "王一诺", seat: "05", task: "课堂小测", page: "第 1 题", status: "关机", online: false, seed: 4 },
-            { id: 6, classId: "c1", name: "赵明轩", seat: "06", task: "万能本", page: "草稿页", status: "演算中", online: true, seed: 5 },
-            { id: 7, classId: "c1", name: "孙沐阳", seat: "07", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, seed: 6 },
-            { id: 8, classId: "c1", name: "何思源", seat: "08", task: "教材同步", page: "P37", status: "阅读中", online: true, seed: 7 },
-            { id: 9, classId: "c2", name: "刘芷晴", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, seed: 8 },
-            { id: 10, classId: "c2", name: "郭佳宁", seat: "02", task: "万能本", page: "草稿页", status: "关机", online: false, seed: 9 },
-            { id: 11, classId: "c2", name: "许文博", seat: "03", task: "课堂小测", page: "第 3 题", status: "作答中", online: true, seed: 10 },
-            { id: 12, classId: "c2", name: "唐语涵", seat: "04", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, seed: 11 },
-            { id: 13, classId: "c2", name: "沈知夏", seat: "05", task: "教材同步", page: "P36", status: "阅读中", online: true, seed: 12 },
-            { id: 14, classId: "c2", name: "顾承泽", seat: "06", task: "课堂小测", page: "第 1 题", status: "作答中", online: true, seed: 13 },
-            { id: 15, classId: "c3", name: "叶安然", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, seed: 14 },
-            { id: 16, classId: "c3", name: "马思远", seat: "02", task: "教材同步", page: "P37", status: "关机", online: false, seed: 15 },
-            { id: 17, classId: "c3", name: "宋可欣", seat: "03", task: "万能本", page: "草稿页", status: "演算中", online: true, seed: 16 },
-            { id: 18, classId: "c3", name: "邵子涵", seat: "04", task: "课堂小测", page: "第 3 题", status: "停留 2 分钟", online: true, seed: 17 }
+            { id: 1, classId: "c1", name: "陈雨桐", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: true, seed: 0 },
+            { id: 2, classId: "c1", name: "李嘉言", seat: "02", task: "课堂小测", page: "第 3 题", status: "停留 2 分钟", online: true, sameLan: true, seed: 1 },
+            { id: 3, classId: "c1", name: "周子墨", seat: "03", task: "教材同步", page: "P36", status: "阅读中", online: true, sameLan: true, seed: 2 },
+            { id: 4, classId: "c1", name: "林若曦", seat: "04", task: "课堂小测", page: "第 2 题", status: "已提交", online: true, sameLan: false, seed: 3 },
+            { id: 5, classId: "c1", name: "王一诺", seat: "05", task: "课堂小测", page: "第 1 题", status: "关机", online: false, sameLan: false, seed: 4 },
+            { id: 6, classId: "c1", name: "赵明轩", seat: "06", task: "万能本", page: "草稿页", status: "演算中", online: true, sameLan: true, seed: 5 },
+            { id: 7, classId: "c1", name: "孙沐阳", seat: "07", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: false, seed: 6 },
+            { id: 8, classId: "c1", name: "何思源", seat: "08", task: "教材同步", page: "P37", status: "阅读中", online: true, sameLan: true, seed: 7 },
+            { id: 9, classId: "c2", name: "刘芷晴", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: true, seed: 8 },
+            { id: 10, classId: "c2", name: "郭佳宁", seat: "02", task: "万能本", page: "草稿页", status: "关机", online: false, sameLan: false, seed: 9 },
+            { id: 11, classId: "c2", name: "许文博", seat: "03", task: "课堂小测", page: "第 3 题", status: "作答中", online: true, sameLan: true, seed: 10 },
+            { id: 12, classId: "c2", name: "唐语涵", seat: "04", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: false, seed: 11 },
+            { id: 13, classId: "c2", name: "沈知夏", seat: "05", task: "教材同步", page: "P36", status: "阅读中", online: true, sameLan: true, seed: 12 },
+            { id: 14, classId: "c2", name: "顾承泽", seat: "06", task: "课堂小测", page: "第 1 题", status: "作答中", online: true, sameLan: true, seed: 13 },
+            { id: 15, classId: "c3", name: "叶安然", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: true, seed: 14 },
+            { id: 16, classId: "c3", name: "马思远", seat: "02", task: "教材同步", page: "P37", status: "关机", online: false, sameLan: false, seed: 15 },
+            { id: 17, classId: "c3", name: "宋可欣", seat: "03", task: "万能本", page: "草稿页", status: "演算中", online: true, sameLan: false, seed: 16 },
+            { id: 18, classId: "c3", name: "邵子涵", seat: "04", task: "课堂小测", page: "第 3 题", status: "停留 2 分钟", online: true, sameLan: true, seed: 17 }
         ];
 
         const legacyProductModules = [
@@ -1929,7 +1935,7 @@
             {
                 id: "class-switch",
                 title: "顶部班级切换",
-                description: "用于确定本次课堂调屏可选择的学生范围。老师可以选择一个或多个有权限的班级，学生列表与正在查看的屏幕会随班级范围同步更新。",
+                description: "用于确定学生列表的展示范围。老师可以选择一个或多个有任教关系的班级，班级切换只更新下方学生列表，不影响已经在屏幕查看区展示的学生。",
                 subfeatures: [
                     {
                         title: "班级默认展示",
@@ -1944,7 +1950,7 @@
                         rules: [
                             ["交互操作", "点击未选班级将其加入当前范围；再次点击已选班级将其移出当前范围。"],
                             ["联动逻辑", "班级范围变化后，学生列表立即合并展示全部已选班级学生。"],
-                            ["查看联动", "取消某个班级时，该班正在查看的学生屏幕同步结束，其他班级学生不受影响。"],
+                            ["查看状态", "切换或取消班级不影响屏幕查看区中已经展示的学生。"],
                             ["空状态", "未选中任何班级时，学生列表展示空状态，提示老师先选择班级。"]
                         ]
                     }
@@ -1961,7 +1967,8 @@
                         rules: [
                             ["默认展示", "进入页面后展示当前已选班级的完整学生名单。多选班级时，合并展示各班学生。"],
                             ["展示数据", "每名学生展示姓名和所属班级。"],
-                            ["设备状态", "在线设备不额外展示状态；关机设备展示“关机”标签并置为不可调取状态。"],
+                            ["设备状态", "关机设备展示“关机”标签；与老师不在同一局域网的设备展示“不可调屏”标签，两种状态均不可调取。"],
+                            ["局域网条件", "学生设备与教师端处于同一局域网时才可调屏。鼠标悬停或点击“不可调屏”标签时，提示“当前不在同一局域网内”。"],
                             ["排序规则", "学生名单按学生 ID 升序排列。"]
                         ]
                     },
@@ -1977,10 +1984,11 @@
                     {
                         title: "选择学生",
                         rules: [
-                            ["交互操作", "点击在线学生后立即发起屏幕连接。"],
+                            ["交互操作", "点击满足调屏条件的学生后立即发起屏幕连接。"],
                             ["多选逻辑", "支持连续选择多名学生；每次新增学生后，右侧画面自动重新排布。"],
                             ["选中状态", "正在查看的学生行显示选中态；再次点击该学生即结束此屏并取消选中。"],
-                            ["关机设备", "点击关机学生不发起连接，并提示“该学生设备已关机”。"]
+                            ["关机设备", "点击关机学生不发起连接，并提示“该学生设备已关机”。"],
+                            ["不可调屏", "点击与老师不在同一局域网的学生不发起连接，并提示“当前不在同一局域网内”。"]
                         ]
                     }
                 ],
@@ -1989,7 +1997,7 @@
             {
                 id: "screen-view",
                 title: "屏幕查看区",
-                description: "实时展示一个或多个学生的墨水屏画面，并提供切换、结束、全屏和屏幕批注等查看过程中的操作。",
+                description: "实时展示一个或多个学生的墨水屏画面，并提供结束、全屏和屏幕批注等查看过程中的操作。",
                 subfeatures: [
                     {
                         title: "未查看空状态",
@@ -2008,12 +2016,10 @@
                         ]
                     },
                     {
-                        title: "切换与结束学生",
+                        title: "结束学生屏幕",
                         rules: [
-                            ["切换学生", "点击单个屏幕的切换按钮后打开学生选择弹层，展示当前班级范围内尚未查看的学生；关机学生保留展示但不可选中。"],
-                            ["替换逻辑", "确认新学生后，在原屏幕位置完成替换，不改变其他学生屏幕顺序。"],
                             ["结束此屏", "点击单屏关闭按钮只结束该学生画面，并同步取消左侧学生选中状态。"],
-                            ["结束全部", "点击查看区顶部“结束”，一次结束全部屏幕、取消全部学生选中并清除临时批注。"]
+                            ["结束全部", "点击查看区顶部“结束”，一次结束全部屏幕、取消全部学生选中并清除临时批注；若当前处于全屏状态，同时自动退出全屏。"]
                         ]
                     },
                     {
@@ -2030,13 +2036,14 @@
                             ["默认状态", "没有正在查看的学生时画笔按钮不可用；存在学生屏幕后按钮恢复可用。"],
                             ["工具展示", "进入画笔模式后展示画笔、橡皮擦、红蓝黑黄四色和清空工具。"],
                             ["交互操作", "老师可直接在任意学生画面上书写；颜色切换后继续使用画笔，橡皮擦仅擦除教师批注。"],
-                            ["数据逻辑", "每个学生屏幕独立保存临时笔迹；布局或全屏变化后按比例重绘。切换或结束学生时清除该学生笔迹。"],
+                            ["数据逻辑", "每个学生屏幕独立保存临时笔迹；布局或全屏变化后按比例重绘。结束学生屏幕时清除该学生笔迹。"],
                             ["保存范围", "批注仅保留在当前教师端会话，不同步至学生设备。"]
                         ]
                     },
                     {
                         title: "连接状态与异常",
                         rules: [
+                            ["局域网条件", "教师端与学生设备必须处于同一局域网，满足条件后才可建立屏幕连接。"],
                             ["连接中", "屏幕连接建立期间显示“正在连接”，成功后自动切换为实时画面。"],
                             ["临时断线", "保留最后一帧并提示“连接中断，正在重连”，其他学生画面继续同步。"],
                             ["重连失败", "展示失败说明，并提供重新连接或结束此屏操作。"],
@@ -2093,6 +2100,10 @@
 
         function classNameOf(classId) {
             return classes.find((item) => item.id === classId)?.name || "";
+        }
+
+        function canViewStudent(student) {
+            return Boolean(student?.online && student.sameLan);
         }
 
         function availableStudents() {
@@ -2229,13 +2240,15 @@
                 const isSelected = selected.has(student.id);
                 const isLive = liveIds.includes(student.id);
                 const isOffline = !student.online;
+                const isLanBlocked = student.online && !student.sameLan;
+                const isUnavailable = isOffline || isLanBlocked;
                 return `
-                    <button class="student-row ${isSelected ? "selected" : ""} ${isLive ? "live" : ""} ${isOffline ? "offline" : ""}" data-id="${student.id}">
+                    <button class="student-row ${isSelected ? "selected" : ""} ${isLive ? "live" : ""} ${isUnavailable ? "offline" : ""}" data-id="${student.id}">
                         <span>
                             <span class="student-name">${student.name}</span>
                             <span class="student-meta">${classNameOf(student.classId)}</span>
                         </span>
-                        ${isOffline ? '<span class="student-status offline">关机</span>' : `<span class="student-action" title="${isSelected ? "已选择" : "选择"}">
+                        ${isOffline ? '<span class="student-status offline">关机</span>' : isLanBlocked ? '<span class="student-status lan-blocked" title="当前不在同一局域网内" aria-label="不可调屏，当前不在同一局域网内">不可调屏</span>' : `<span class="student-action" title="${isSelected ? "已选择" : "选择"}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">${isSelected ? '<path d="m20 6-11 11-5-5"/>' : '<path d="M12 5v14"/><path d="M5 12h14"/>'}</svg>
                         </span>`}
                     </button>
@@ -2281,7 +2294,6 @@
                             <strong>${student.name}</strong>
                         </div>
                         <div class="mini-actions">
-                            <button class="mini" title="切换学生" data-action="replace" data-id="${student.id}">${iconPaths("swap")}</button>
                             <button class="mini" title="结束此屏" data-action="remove" data-id="${student.id}">${iconPaths("close")}</button>
                         </div>
                     </div>
@@ -2445,6 +2457,7 @@
         }
 
         function endCurrentView() {
+            if (isViewerFullscreen) setViewerFullscreen(false);
             if (!selected.size) {
                 showToast("当前没有正在查看的屏幕");
                 return;
@@ -2489,13 +2502,15 @@
             $("#modalList").innerHTML = list.map((student) => {
                 const active = modalSelected.has(student.id);
                 const isOffline = !student.online;
+                const isLanBlocked = student.online && !student.sameLan;
+                const isUnavailable = isOffline || isLanBlocked;
                 return `
-                    <button class="student-row ${active ? "selected" : ""} ${isOffline ? "offline" : ""}" data-modal-id="${student.id}" ${isOffline ? "disabled" : ""}>
+                    <button class="student-row ${active ? "selected" : ""} ${isUnavailable ? "offline" : ""}" data-modal-id="${student.id}" ${isUnavailable ? "disabled" : ""}>
                         <span>
                             <span class="student-name">${student.name}</span>
                             <span class="student-meta">${classNameOf(student.classId)}</span>
                         </span>
-                        ${isOffline ? '<span class="student-status offline">关机</span>' : ""}
+                        ${isOffline ? '<span class="student-status offline">关机</span>' : isLanBlocked ? '<span class="student-status lan-blocked" title="当前不在同一局域网内">不可调屏</span>' : ""}
                     </button>
                 `;
             }).join("");
@@ -2532,6 +2547,10 @@
             const student = students.find((item) => item.id === id);
             if (!student?.online) {
                 showToast("该学生设备已关机");
+                return;
+            }
+            if (!student.sameLan) {
+                showToast("当前不在同一局域网内");
                 return;
             }
             if (selected.has(id)) {
@@ -2590,7 +2609,6 @@
             const id = Number(actionButton.dataset.id);
             const action = actionButton.dataset.action;
             if (action === "remove") removeLive(id);
-            if (action === "replace") openModal(id);
         });
 
         classPicker.addEventListener("click", (event) => {
@@ -2607,15 +2625,8 @@
             } catch {
                 // Storage may be unavailable in restricted browser contexts.
             }
-            const availableIds = new Set(availableStudents().map((student) => student.id));
-            [...selected].forEach((studentId) => {
-                if (!availableIds.has(studentId)) {
-                    selected.delete(studentId);
-                    annotationStrokes.delete(studentId);
-                }
-            });
             renderClassPicker();
-            renderScreens();
+            renderStudents();
         });
 
         $("#endViewBtn").addEventListener("click", endCurrentView);
@@ -2663,7 +2674,7 @@
             const row = event.target.closest("[data-modal-id]");
             if (!row) return;
             const id = Number(row.dataset.modalId);
-            if (!students.find((student) => student.id === id)?.online) return;
+            if (!canViewStudent(students.find((student) => student.id === id))) return;
             modalSelected = new Set([id]);
             renderModalList();
         });
