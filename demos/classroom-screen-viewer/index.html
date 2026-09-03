@@ -250,12 +250,43 @@
             opacity: 0.48;
         }
 
+        .class-scope {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .stage-picker,
         .class-picker {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 12px;
+        }
+
+        .stage-picker {
+            padding-right: 10px;
+            border-right: 1px solid var(--line-strong);
+        }
+
+        .stage-chip-button {
+            height: 34px;
+            padding: 0 12px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: #eef2f6;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 720;
+            cursor: pointer;
+        }
+
+        .stage-chip-button.active {
+            border-color: #9cc5ff;
+            background: var(--blue);
+            color: #fff;
         }
 
         .class-chip-button {
@@ -274,6 +305,17 @@
             border-color: var(--blue);
             background: var(--blue-soft);
             color: var(--blue-dark);
+        }
+
+        .class-kind {
+            margin-left: 5px;
+            color: var(--subtle);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .class-chip-button.active .class-kind {
+            color: #4e7fca;
         }
 
         .workspace {
@@ -383,9 +425,13 @@
         }
 
         .student-row.offline {
-            cursor: default;
+            cursor: not-allowed;
             background: #f8fafc;
             color: var(--muted);
+        }
+
+        .student-row.limit-reached:not(.selected) {
+            opacity: 0.68;
         }
 
         .student-name {
@@ -440,10 +486,9 @@
             color: #667085;
         }
 
-        .student-status.lan-blocked {
-            background: #fff5e8;
-            color: #b54708;
-            cursor: help;
+        .student-status.online {
+            background: var(--green-soft);
+            color: var(--green);
         }
 
         .viewer {
@@ -776,6 +821,47 @@
             touch-action: none;
         }
 
+        .connection-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 7;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(247, 247, 242, 0.9);
+            text-align: center;
+        }
+
+        .connection-overlay > div {
+            display: grid;
+            justify-items: center;
+            gap: 10px;
+        }
+
+        .connection-overlay svg {
+            width: 34px;
+            height: 34px;
+            color: #475467;
+        }
+
+        .connection-overlay.reconnecting svg {
+            color: var(--blue);
+            animation: reconnect-spin 1.2s linear infinite;
+        }
+
+        .connection-overlay strong {
+            font-size: 16px;
+        }
+
+        .connection-overlay span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        @keyframes reconnect-spin {
+            to { transform: rotate(360deg); }
+        }
+
         .viewer.annotating .annotation-canvas {
             pointer-events: auto;
             cursor: crosshair;
@@ -950,7 +1036,7 @@
         .modal-mask {
             position: fixed;
             inset: 0;
-            z-index: 10;
+            z-index: 60;
             display: none;
             align-items: center;
             justify-content: center;
@@ -971,6 +1057,22 @@
             border-radius: 8px;
             background: #fff;
             box-shadow: 0 24px 80px rgba(16, 24, 40, 0.28);
+        }
+
+        .modal.confirm-dialog {
+            width: min(430px, 100%);
+            grid-template-rows: auto 1fr auto;
+        }
+
+        .confirm-copy {
+            padding: 28px 22px 30px;
+            color: #344054;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .confirm-dialog .modal-foot {
+            justify-content: flex-end;
         }
 
         .modal .student-list {
@@ -1203,6 +1305,17 @@
         .prd-rule-list strong {
             color: #101828;
             font-weight: 760;
+        }
+
+        .doc-revision-old {
+            color: #98a2b3;
+            text-decoration: line-through;
+            text-decoration-thickness: 1px;
+        }
+
+        .doc-revision-new {
+            color: var(--green);
+            font-weight: 650;
         }
 
         .detail-section {
@@ -1506,7 +1619,10 @@
                 <div>
                     <h1>课堂调屏</h1>
                     <p class="subtitle hidden" id="modeDescription">点击右侧产品说明模块，左侧会高亮对应的 Demo 区域。</p>
-                    <div class="class-picker" id="classPicker" aria-label="班级选择" data-explain-highlight="class-switch"></div>
+                    <div class="class-scope" data-explain-highlight="class-switch">
+                        <div class="stage-picker" id="stagePicker" aria-label="学段筛选"></div>
+                        <div class="class-picker" id="classPicker" aria-label="班级选择"></div>
+                    </div>
                 </div>
                 <div class="mode-switch" role="tablist" aria-label="页面模式">
                     <button class="mode-option active" data-page-mode="demo" role="tab" aria-selected="true">
@@ -1581,23 +1697,18 @@
     </div>
 
     <div class="modal-mask" id="modalMask" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="panel-head">
-                <h2 class="panel-title" id="modalTitle">切换学生</h2>
+                <h2 class="panel-title" id="modalTitle">断开全部投屏？</h2>
                 <button class="btn icon" id="modalClose" title="关闭">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>
             </div>
-            <div class="search">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                <input id="modalSearch" type="search" placeholder="输入姓名快速查找">
-            </div>
-            <div class="student-list" id="modalList"></div>
+            <div class="confirm-copy">是否断开全部投屏？断开后将清空当前已选择的学生屏幕。</div>
             <div class="modal-foot">
-                <span class="selected-count" id="modalHint">选择 1 位学生替换当前屏幕</span>
                 <div class="actions">
                     <button class="btn" id="modalCancel">取消</button>
-                    <button class="btn primary" id="modalConfirm">确认</button>
+                    <button class="btn danger" id="modalConfirm">断开</button>
                 </div>
             </div>
         </div>
@@ -1606,31 +1717,37 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        const stages = [
+            { id: "primary", name: "小学", order: 1 },
+            { id: "junior", name: "初中", order: 2 }
+        ];
+
         const classes = [
-            { id: "c1", name: "初一 1 班" },
-            { id: "c2", name: "初一 2 班" },
-            { id: "c3", name: "初一 3 班" }
+            { id: "c1", name: "初一 1 班", stageId: "junior", type: "行政班" },
+            { id: "c2", name: "初一 2 班", stageId: "junior", type: "行政班" },
+            { id: "t1", name: "初一数学 A 班", stageId: "junior", type: "教学班" },
+            { id: "p1", name: "六年级 1 班", stageId: "primary", type: "行政班" }
         ];
 
         const students = [
-            { id: 1, classId: "c1", name: "陈雨桐", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: true, seed: 0 },
-            { id: 2, classId: "c1", name: "李嘉言", seat: "02", task: "课堂小测", page: "第 3 题", status: "停留 2 分钟", online: true, sameLan: true, seed: 1 },
-            { id: 3, classId: "c1", name: "周子墨", seat: "03", task: "教材同步", page: "P36", status: "阅读中", online: true, sameLan: true, seed: 2 },
-            { id: 4, classId: "c1", name: "林若曦", seat: "04", task: "课堂小测", page: "第 2 题", status: "已提交", online: true, sameLan: false, seed: 3 },
-            { id: 5, classId: "c1", name: "王一诺", seat: "05", task: "课堂小测", page: "第 1 题", status: "关机", online: false, sameLan: false, seed: 4 },
-            { id: 6, classId: "c1", name: "赵明轩", seat: "06", task: "万能本", page: "草稿页", status: "演算中", online: true, sameLan: true, seed: 5 },
-            { id: 7, classId: "c1", name: "孙沐阳", seat: "07", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: false, seed: 6 },
-            { id: 8, classId: "c1", name: "何思源", seat: "08", task: "教材同步", page: "P37", status: "阅读中", online: true, sameLan: true, seed: 7 },
-            { id: 9, classId: "c2", name: "刘芷晴", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: true, seed: 8 },
-            { id: 10, classId: "c2", name: "郭佳宁", seat: "02", task: "万能本", page: "草稿页", status: "关机", online: false, sameLan: false, seed: 9 },
-            { id: 11, classId: "c2", name: "许文博", seat: "03", task: "课堂小测", page: "第 3 题", status: "作答中", online: true, sameLan: true, seed: 10 },
-            { id: 12, classId: "c2", name: "唐语涵", seat: "04", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: false, seed: 11 },
-            { id: 13, classId: "c2", name: "沈知夏", seat: "05", task: "教材同步", page: "P36", status: "阅读中", online: true, sameLan: true, seed: 12 },
-            { id: 14, classId: "c2", name: "顾承泽", seat: "06", task: "课堂小测", page: "第 1 题", status: "作答中", online: true, sameLan: true, seed: 13 },
-            { id: 15, classId: "c3", name: "叶安然", seat: "01", task: "课堂小测", page: "第 2 题", status: "作答中", online: true, sameLan: true, seed: 14 },
-            { id: 16, classId: "c3", name: "马思远", seat: "02", task: "教材同步", page: "P37", status: "关机", online: false, sameLan: false, seed: 15 },
-            { id: 17, classId: "c3", name: "宋可欣", seat: "03", task: "万能本", page: "草稿页", status: "演算中", online: true, sameLan: false, seed: 16 },
-            { id: 18, classId: "c3", name: "邵子涵", seat: "04", task: "课堂小测", page: "第 3 题", status: "停留 2 分钟", online: true, sameLan: true, seed: 17 }
+            { id: 1, classId: "c1", filterClassIds: ["c1", "t1"], name: "陈雨桐", task: "课堂小测", page: "第 2 题", online: true, seed: 0 },
+            { id: 2, classId: "c1", filterClassIds: ["c1", "t1"], name: "李嘉言", task: "课堂小测", page: "第 3 题", online: true, seed: 1 },
+            { id: 3, classId: "c1", filterClassIds: ["c1", "t1"], name: "周子墨", task: "教材同步", page: "P36", online: true, connectionState: "reconnecting", seed: 2 },
+            { id: 4, classId: "c1", filterClassIds: ["c1"], name: "林若曦", task: "课堂小测", page: "第 2 题", online: true, seed: 3 },
+            { id: 5, classId: "c1", filterClassIds: ["c1"], name: "王一诺", task: "课堂小测", page: "第 1 题", online: false, seed: 4 },
+            { id: 6, classId: "c1", filterClassIds: ["c1", "t1"], name: "赵明轩", task: "万能本", page: "草稿页", online: true, connectionState: "ended", seed: 5 },
+            { id: 7, classId: "c1", filterClassIds: ["c1"], name: "孙沐阳", task: "课堂小测", page: "第 2 题", online: true, seed: 6 },
+            { id: 8, classId: "c1", filterClassIds: ["c1"], name: "何思源", task: "教材同步", page: "P37", online: true, seed: 7 },
+            { id: 9, classId: "c2", filterClassIds: ["c2", "t1"], name: "刘芷晴", task: "课堂小测", page: "第 2 题", online: true, seed: 8 },
+            { id: 10, classId: "c2", filterClassIds: ["c2"], name: "郭佳宁", task: "万能本", page: "草稿页", online: false, seed: 9 },
+            { id: 11, classId: "c2", filterClassIds: ["c2", "t1"], name: "许文博", task: "课堂小测", page: "第 3 题", online: true, seed: 10 },
+            { id: 12, classId: "c2", filterClassIds: ["c2"], name: "唐语涵", task: "课堂小测", page: "第 2 题", online: true, seed: 11 },
+            { id: 13, classId: "c2", filterClassIds: ["c2", "t1"], name: "沈知夏", task: "教材同步", page: "P36", online: true, seed: 12 },
+            { id: 14, classId: "c2", filterClassIds: ["c2"], name: "顾承泽", task: "课堂小测", page: "第 1 题", online: true, seed: 13 },
+            { id: 15, classId: "p1", filterClassIds: ["p1"], name: "叶安然", task: "课堂小测", page: "第 2 题", online: true, seed: 14 },
+            { id: 16, classId: "p1", filterClassIds: ["p1"], name: "马思远", task: "教材同步", page: "P37", online: false, seed: 15 },
+            { id: 17, classId: "p1", filterClassIds: ["p1"], name: "宋可欣", task: "万能本", page: "草稿页", online: true, seed: 16 },
+            { id: 18, classId: "p1", filterClassIds: ["p1"], name: "邵子涵", task: "课堂小测", page: "第 3 题", online: true, seed: 17 }
         ];
 
         const legacyProductModules = [
@@ -1935,13 +2052,31 @@
             {
                 id: "class-switch",
                 title: "顶部班级切换",
-                description: "用于确定学生列表的展示范围。老师可以选择一个或多个有任教关系的班级，班级切换只更新下方学生列表，不影响已经在屏幕查看区展示的学生。",
+                description: "用于确定学生列表的展示范围。老师可以选择一个或多个有任教关系的班级，班级切换只更新下方学生列表，不影响已经在屏幕查看区展示的学生。<span class=\"doc-revision-new\">投屏入口、班级范围和页面准入均由教师权限及任教关系共同决定。</span>",
                 subfeatures: [
+                    {
+                        title: "投屏入口与权限",
+                        rules: [
+                            ["权限点", "<span class=\"doc-revision-new\">在“墨水屏”模块下新增“投屏”权限点。</span>"],
+                            ["入口展示", "<span class=\"doc-revision-new\">仅拥有“投屏”权限的老师展示并可进入投屏入口；无权限时不展示入口。</span>"],
+                            ["数据范围", "<span class=\"doc-revision-new\">老师可查看的班级范围与其任教班级一致；可查看的学生由当前选中的班级决定。</span>"],
+                            ["人数校验", "<span class=\"doc-revision-new\">进入页面时校验老师的任教学生总数；超过阈值（暂定 500 人）时，不加载班级、学生及屏幕内容，页面展示空状态。</span>"],
+                            ["超限提示", "<span class=\"doc-revision-new\">弹窗提示“任教学生超过500人，暂不支持体验本功能，请减少任教学生数量后重试”；点击“确定”后退出投屏页面。</span>"]
+                        ]
+                    },
+                    {
+                        title: "学段筛选",
+                        rules: [
+                            ["多学段", "<span class=\"doc-revision-new\">老师任教多个学段时展示学段筛选项，默认选中最大学段，支持手动切换。</span>"],
+                            ["单学段", "<span class=\"doc-revision-new\">老师仅任教一个学段时不展示学段筛选项，默认使用该学段。</span>"],
+                            ["联动逻辑", "<span class=\"doc-revision-new\">切换学段后，仅展示该学段下老师任教的班级；已在屏幕查看区展示的学生不受影响。</span>"]
+                        ]
+                    },
                     {
                         title: "班级默认展示",
                         rules: [
                             ["默认展示", "默认选中老师上一次选择的班级；没有历史选择记录时，默认选中班级列表中的第一个班级。"],
-                            ["展示数据", "展示老师有任教关系的班级。"],
+                            ["展示数据", "<span class=\"doc-revision-old\">展示老师有任教关系的班级。</span> <span class=\"doc-revision-new\">展示当前学段下老师任教的行政班和教学班。</span>"],
                             ["选中状态", "已选班级展示选中态；支持同时选中多个班级。"]
                         ]
                     },
@@ -1966,9 +2101,10 @@
                         title: "学生名单展示",
                         rules: [
                             ["默认展示", "进入页面后展示当前已选班级的完整学生名单。多选班级时，合并展示各班学生。"],
-                            ["展示数据", "每名学生展示姓名和所属班级。"],
-                            ["设备状态", "关机设备展示“关机”标签；与老师不在同一局域网的设备展示“不可调屏”标签，两种状态均不可调取。"],
-                            ["局域网条件", "学生设备与教师端处于同一局域网时才可调屏。鼠标悬停或点击“不可调屏”标签时，提示“当前不在同一局域网内”。"],
+                            ["展示数据", "<span class=\"doc-revision-old\">每名学生展示姓名和所属班级。</span> <span class=\"doc-revision-new\">每名学生展示姓名及其所在行政班；即使学生通过教学班被纳入当前列表，班级信息仍只展示行政班。</span>"],
+                            ["设备状态", "<span class=\"doc-revision-old\">关机设备展示“关机”标签；与老师不在同一局域网的设备展示“不可调屏”标签，两种状态均不可调取。</span> <span class=\"doc-revision-new\">学生状态仅区分“在线”和“离线”：在线学生可选，离线学生不可选。</span>"],
+                            ["状态展示", "<span class=\"doc-revision-new\">未选中学生展示在线或离线状态；学生被选中后不再展示在线/离线状态，仅保留选中态。</span>"],
+                            ["局域网条件", "<span class=\"doc-revision-old\">学生设备与教师端处于同一局域网时才可调屏，并单独展示“不可调屏”状态。</span> <span class=\"doc-revision-new\">不再将局域网条件作为学生列表中的第三种状态，列表状态统一收敛为在线与离线。</span>"],
                             ["排序规则", "学生名单按学生 ID 升序排列。"]
                         ]
                     },
@@ -1984,11 +2120,12 @@
                     {
                         title: "选择学生",
                         rules: [
-                            ["交互操作", "点击满足调屏条件的学生后立即发起屏幕连接。"],
-                            ["多选逻辑", "支持连续选择多名学生；每次新增学生后，右侧画面自动重新排布。"],
+                            ["交互操作", "<span class=\"doc-revision-old\">点击满足调屏条件的学生后立即发起屏幕连接。</span> <span class=\"doc-revision-new\">点击在线学生后立即发起屏幕连接；离线学生不可选中。</span>"],
+                            ["多选逻辑", "<span class=\"doc-revision-old\">支持连续选择多名学生；每次新增学生后，右侧画面自动重新排布。</span> <span class=\"doc-revision-new\">支持连续选择多名学生，投屏数量上限暂定为 5 个；每次新增学生后，右侧画面自动重新排布。</span>"],
+                            ["数量上限", "<span class=\"doc-revision-new\">已投屏 5 名学生时，其他在线学生不可继续选中，并提示“最多可同时查看5名学生”。结束任意一个屏幕后可继续选择。</span>"],
                             ["选中状态", "正在查看的学生行显示选中态；再次点击该学生即结束此屏并取消选中。"],
-                            ["关机设备", "点击关机学生不发起连接，并提示“该学生设备已关机”。"],
-                            ["不可调屏", "点击与老师不在同一局域网的学生不发起连接，并提示“当前不在同一局域网内”。"]
+                            ["离线学生", "<span class=\"doc-revision-old\">点击关机学生不发起连接，并提示“该学生设备已关机”。</span> <span class=\"doc-revision-new\">离线学生置为不可选状态，点击不发起屏幕连接。</span>"],
+                            ["不可调屏", "<span class=\"doc-revision-old\">点击与老师不在同一局域网的学生不发起连接，并提示“当前不在同一局域网内”。</span>"]
                         ]
                     }
                 ],
@@ -2019,7 +2156,9 @@
                         title: "结束学生屏幕",
                         rules: [
                             ["结束此屏", "点击单屏关闭按钮只结束该学生画面，并同步取消左侧学生选中状态。"],
-                            ["结束全部", "点击查看区顶部“结束”，一次结束全部屏幕、取消全部学生选中并清除临时批注；若当前处于全屏状态，同时自动退出全屏。"]
+                            ["结束全部", "<span class=\"doc-revision-old\">点击查看区顶部“结束”，一次结束全部屏幕、取消全部学生选中并清除临时批注；若当前处于全屏状态，同时自动退出全屏。</span> <span class=\"doc-revision-new\">点击“退出”或“结束”时弹出二次确认弹窗，提示“是否断开全部投屏？”。</span>"],
+                            ["取消操作", "<span class=\"doc-revision-new\">点击“取消”关闭弹窗，并停留在原页面，当前投屏学生及屏幕状态保持不变。</span>"],
+                            ["确认断开", "<span class=\"doc-revision-new\">点击“断开”后关闭全部投屏、清空已选学生及其屏幕；若处于全屏状态，同时退出全屏。</span>"]
                         ]
                     },
                     {
@@ -2043,11 +2182,20 @@
                     {
                         title: "连接状态与异常",
                         rules: [
-                            ["局域网条件", "教师端与学生设备必须处于同一局域网，满足条件后才可建立屏幕连接。"],
+                            ["局域网条件", "<span class=\"doc-revision-old\">教师端与学生设备必须处于同一局域网，满足条件后才可建立屏幕连接。</span>"],
                             ["连接中", "屏幕连接建立期间显示“正在连接”，成功后自动切换为实时画面。"],
-                            ["临时断线", "保留最后一帧并提示“连接中断，正在重连”，其他学生画面继续同步。"],
-                            ["重连失败", "展示失败说明，并提供重新连接或结束此屏操作。"],
-                            ["隐私提示", "学生屏幕被查看期间，学生端应展示轻量提示；结束查看后提示立即消失。"]
+                            ["临时断线", "<span class=\"doc-revision-old\">保留最后一帧并提示“连接中断，正在重连”，其他学生画面继续同步。</span> <span class=\"doc-revision-new\">投屏过程中发生可恢复的网络断连时，对应学生屏幕区提示“连接中断，正在重练”，系统自动尝试恢复连接，其他学生画面继续同步。</span>"],
+                            ["不可恢复断连", "<span class=\"doc-revision-new\">因学生登出或设备关机导致连接断开时，对应学生屏幕区提示“连接已中断”，不再自动重连。</span>"],
+                            ["重连失败", "展示失败说明，并提供重新连接或结束此屏操作。"]
+                        ]
+                    },
+                    {
+                        title: "学生端投屏状态",
+                        rules: [
+                            ["状态展示", "<span class=\"doc-revision-old\">学生屏幕被查看期间，学生端展示轻量提示；结束查看后提示立即消失。</span> <span class=\"doc-revision-new\">老师成功选中学生并开始投屏后，被选择学生的设备顶部系统状态栏展示“投屏中”状态标识。</span>"],
+                            ["状态说明", "<span class=\"doc-revision-new\">学生点击“投屏中”状态标识后弹出气泡，文案为“老师正在查看你的屏幕哦~”。</span>"],
+                            ["气泡关闭", "<span class=\"doc-revision-new\">点击关闭、触发页面跳转或收起状态栏时，气泡自动消失。</span>"],
+                            ["状态结束", "<span class=\"doc-revision-new\">老师结束该学生投屏或连接终止后，学生端“投屏中”状态标识消失。</span>"]
                         ]
                     }
                 ],
@@ -2055,19 +2203,22 @@
             }
         ];
 
+        const MAX_VIEWERS = 5;
+        const defaultStageId = [...stages].sort((a, b) => b.order - a.order)[0].id;
+        let activeStageId = defaultStageId;
+
         const storedClassIds = (() => {
             try {
                 const value = JSON.parse(localStorage.getItem("screen-viewer-class-ids") || "[]");
-                return Array.isArray(value) ? value.filter((id) => classes.some((item) => item.id === id)) : [];
+                return Array.isArray(value) ? value.filter((id) => classes.some((item) => item.id === id && item.stageId === activeStageId)) : [];
             } catch {
                 return [];
             }
         })();
-        const selectedClasses = new Set(storedClassIds.length ? storedClassIds : [classes[0].id]);
+        const firstClassInStage = (stageId) => classes.find((item) => item.stageId === stageId)?.id;
+        const selectedClasses = new Set(storedClassIds.length ? storedClassIds : [firstClassInStage(activeStageId)]);
         const selected = new Set();
         let liveIds = [];
-        let replaceTarget = null;
-        let modalSelected = new Set();
         const annotationStrokes = new Map();
         let annotationMode = false;
         let drawingTool = "pen";
@@ -2077,6 +2228,7 @@
         let activeProductModule = null;
 
         const $ = (selector) => document.querySelector(selector);
+        const stagePicker = $("#stagePicker");
         const classPicker = $("#classPicker");
         const studentList = $("#studentList");
         const viewer = $(".viewer");
@@ -2103,12 +2255,12 @@
         }
 
         function canViewStudent(student) {
-            return Boolean(student?.online && student.sameLan);
+            return Boolean(student?.online);
         }
 
         function availableStudents() {
             return students
-                .filter((student) => selectedClasses.has(student.classId))
+                .filter((student) => student.filterClassIds.some((classId) => selectedClasses.has(classId)))
                 .sort((a, b) => a.id - b.id);
         }
 
@@ -2201,10 +2353,21 @@
             }
         }
 
+        function renderStagePicker() {
+            stagePicker.classList.toggle("hidden", stages.length <= 1);
+            stagePicker.innerHTML = stages.length > 1 ? stages
+                .sort((a, b) => b.order - a.order)
+                .map((item) => `
+                    <button class="stage-chip-button ${activeStageId === item.id ? "active" : ""}" data-stage-id="${item.id}">
+                        ${item.name}
+                    </button>
+                `).join("") : "";
+        }
+
         function renderClassPicker() {
-            classPicker.innerHTML = classes.map((item) => `
+            classPicker.innerHTML = classes.filter((item) => item.stageId === activeStageId).map((item) => `
                 <button class="class-chip-button ${selectedClasses.has(item.id) ? "active" : ""}" data-class-id="${item.id}">
-                    ${item.name}
+                    ${item.name}<span class="class-kind">${item.type}</span>
                 </button>
             `).join("");
         }
@@ -2240,17 +2403,16 @@
                 const isSelected = selected.has(student.id);
                 const isLive = liveIds.includes(student.id);
                 const isOffline = !student.online;
-                const isLanBlocked = student.online && !student.sameLan;
-                const isUnavailable = isOffline || isLanBlocked;
+                const isLimitReached = selected.size >= MAX_VIEWERS && !isSelected;
                 return `
-                    <button class="student-row ${isSelected ? "selected" : ""} ${isLive ? "live" : ""} ${isUnavailable ? "offline" : ""}" data-id="${student.id}">
+                    <button class="student-row ${isSelected ? "selected" : ""} ${isLive ? "live" : ""} ${isOffline ? "offline" : ""} ${isLimitReached ? "limit-reached" : ""}" data-id="${student.id}" ${isOffline ? "disabled" : ""}>
                         <span>
                             <span class="student-name">${student.name}</span>
                             <span class="student-meta">${classNameOf(student.classId)}</span>
                         </span>
-                        ${isOffline ? '<span class="student-status offline">关机</span>' : isLanBlocked ? '<span class="student-status lan-blocked" title="当前不在同一局域网内" aria-label="不可调屏，当前不在同一局域网内">不可调屏</span>' : `<span class="student-action" title="${isSelected ? "已选择" : "选择"}">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">${isSelected ? '<path d="m20 6-11 11-5-5"/>' : '<path d="M12 5v14"/><path d="M5 12h14"/>'}</svg>
-                        </span>`}
+                        ${isSelected ? `<span class="student-action" title="已选择">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m20 6-11 11-5-5"/></svg>
+                        </span>` : `<span class="student-status ${isOffline ? "offline" : "online"}">${isOffline ? "离线" : "在线"}</span>`}
                     </button>
                 `;
             }).join("");
@@ -2287,6 +2449,26 @@
 
         function screenCard(student) {
             const choice = ["A", "B", "C", "D"][student.seed % 4];
+            const connectionOverlay = student.connectionState === "reconnecting" ? `
+                <div class="connection-overlay reconnecting">
+                    <div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+                        <strong>连接中断，正在重练</strong>
+                        <span>系统正在尝试恢复连接</span>
+                    </div>
+                </div>
+            ` : student.connectionState === "ended" ? `
+                <div class="connection-overlay ended">
+                    <div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 5l14 14"/><path d="M8.5 8.5A6 6 0 0 0 6 13v3l-2 2h14"/><path d="M18 13a6 6 0 0 0-6-6"/></svg>
+                        <strong>连接已中断</strong>
+                        <span>学生可能已登出或关闭设备</span>
+                    </div>
+                </div>
+            ` : "";
+            const footerStatus = student.connectionState === "reconnecting"
+                ? "正在重练"
+                : student.connectionState === "ended" ? "连接已中断" : "实时画面";
             return `
                 <article class="screen-card" data-id="${student.id}">
                     <div class="screen-toolbar">
@@ -2320,10 +2502,11 @@
                                 </div>
                             </div>
                             <canvas class="annotation-canvas" data-annotation-id="${student.id}" aria-label="${student.name}屏幕批注画布"></canvas>
+                            ${connectionOverlay}
                         </div>
                     </div>
                     <footer class="screen-footer">
-                        <span class="pulse">实时画面</span>
+                        <span class="${student.connectionState ? "" : "pulse"}">${footerStatus}</span>
                     </footer>
                 </article>
             `;
@@ -2457,16 +2640,21 @@
         }
 
         function endCurrentView() {
-            if (isViewerFullscreen) setViewerFullscreen(false);
             if (!selected.size) {
                 showToast("当前没有正在查看的屏幕");
                 return;
             }
+            openEndConfirm();
+        }
+
+        function confirmEndView() {
+            if (isViewerFullscreen) setViewerFullscreen(false);
             selected.clear();
             liveIds = [];
             annotationStrokes.clear();
+            closeModal();
             renderScreens();
-            showToast("已结束");
+            showToast("已断开全部投屏");
         }
 
         function removeLive(id) {
@@ -2476,61 +2664,14 @@
             showToast("已结束该学生屏幕");
         }
 
-        function openModal(targetId = null) {
-            replaceTarget = targetId;
-            modalSelected = new Set();
-            $("#modalTitle").textContent = "切换学生";
-            $("#modalHint").textContent = "选择 1 位学生替换当前屏幕";
-            $("#modalSearch").value = "";
+        function openEndConfirm() {
             $("#modalMask").classList.add("show");
             $("#modalMask").setAttribute("aria-hidden", "false");
-            renderModalList();
         }
 
         function closeModal() {
             $("#modalMask").classList.remove("show");
             $("#modalMask").setAttribute("aria-hidden", "true");
-        }
-
-        function renderModalList() {
-            const query = $("#modalSearch").value.trim().toLowerCase();
-            const list = availableStudents().filter((student) => {
-                const notCurrent = student.id !== replaceTarget && !selected.has(student.id);
-                const hit = !query || student.name.toLowerCase().includes(query);
-                return notCurrent && hit;
-            });
-            $("#modalList").innerHTML = list.map((student) => {
-                const active = modalSelected.has(student.id);
-                const isOffline = !student.online;
-                const isLanBlocked = student.online && !student.sameLan;
-                const isUnavailable = isOffline || isLanBlocked;
-                return `
-                    <button class="student-row ${active ? "selected" : ""} ${isUnavailable ? "offline" : ""}" data-modal-id="${student.id}" ${isUnavailable ? "disabled" : ""}>
-                        <span>
-                            <span class="student-name">${student.name}</span>
-                            <span class="student-meta">${classNameOf(student.classId)}</span>
-                        </span>
-                        ${isOffline ? '<span class="student-status offline">关机</span>' : isLanBlocked ? '<span class="student-status lan-blocked" title="当前不在同一局域网内">不可调屏</span>' : ""}
-                    </button>
-                `;
-            }).join("");
-            const count = modalSelected.size;
-            $("#modalHint").textContent = count ? "已选择 1 位学生替换当前屏幕" : "选择 1 位学生替换当前屏幕";
-        }
-
-        function confirmModal() {
-            const ids = [...modalSelected];
-            if (!ids.length) {
-                showToast("请选择学生");
-                return;
-            }
-            const nextId = ids[0];
-            selected.delete(replaceTarget);
-            annotationStrokes.delete(replaceTarget);
-            selected.add(nextId);
-            showToast("已切换学生屏幕");
-            closeModal();
-            renderScreens();
         }
 
         function showToast(message) {
@@ -2546,17 +2687,17 @@
             const id = Number(row.dataset.id);
             const student = students.find((item) => item.id === id);
             if (!student?.online) {
-                showToast("该学生设备已关机");
-                return;
-            }
-            if (!student.sameLan) {
-                showToast("当前不在同一局域网内");
+                showToast("该学生当前离线");
                 return;
             }
             if (selected.has(id)) {
                 selected.delete(id);
                 annotationStrokes.delete(id);
             } else {
+                if (selected.size >= MAX_VIEWERS) {
+                    showToast("最多可同时查看5名学生");
+                    return;
+                }
                 selected.add(id);
             }
             renderScreens();
@@ -2629,6 +2770,24 @@
             renderStudents();
         });
 
+        stagePicker.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-stage-id]");
+            if (!button || button.dataset.stageId === activeStageId) return;
+            activeStageId = button.dataset.stageId;
+            selectedClasses.clear();
+            const defaultClassId = firstClassInStage(activeStageId);
+            if (defaultClassId) selectedClasses.add(defaultClassId);
+            $("#searchInput").value = "";
+            try {
+                localStorage.setItem("screen-viewer-class-ids", JSON.stringify([...selectedClasses]));
+            } catch {
+                // Storage may be unavailable in restricted browser contexts.
+            }
+            renderStagePicker();
+            renderClassPicker();
+            renderStudents();
+        });
+
         $("#endViewBtn").addEventListener("click", endCurrentView);
         fullscreenBtn.addEventListener("click", () => setViewerFullscreen(!isViewerFullscreen));
         annotationModeBtn.addEventListener("click", () => setAnnotationMode(!annotationMode));
@@ -2665,20 +2824,12 @@
 
         $("#modalClose").addEventListener("click", closeModal);
         $("#modalCancel").addEventListener("click", closeModal);
-        $("#modalConfirm").addEventListener("click", confirmModal);
-        $("#modalSearch").addEventListener("input", renderModalList);
+        $("#modalConfirm").addEventListener("click", confirmEndView);
         $("#modalMask").addEventListener("click", (event) => {
             if (event.target.id === "modalMask") closeModal();
         });
-        $("#modalList").addEventListener("click", (event) => {
-            const row = event.target.closest("[data-modal-id]");
-            if (!row) return;
-            const id = Number(row.dataset.modalId);
-            if (!canViewStudent(students.find((student) => student.id === id))) return;
-            modalSelected = new Set([id]);
-            renderModalList();
-        });
 
+        renderStagePicker();
         renderClassPicker();
         renderStudents();
         renderScreens();
