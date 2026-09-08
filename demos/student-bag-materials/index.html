@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资料 - 墨水屏学生端</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --ink-black: #000000;
+            --ink-dark-gray: #333333;
+            --ink-gray: #666666;
+            --ink-light-gray: #e0e0e0;
+            --ink-bg: #f5f7fa;
+            --ink-white: #ffffff;
+            --border-radius: 12px;
+            --border-width: 1.5px;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #c4c4c4;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .device-shell {
+            width: 750px;
+            height: 1080px;
+            background-color: #2c2c2c;
+            border-radius: 36px;
+            padding: 24px;
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.4),
+                inset 0 2px 5px rgba(255,255,255,0.1);
+            position: relative;
+            transform-origin: center center;
+            max-height: 95vh;
+            max-width: 95vw;
+        }
+
+        .device-screen {
+            width: 100%;
+            height: 100%;
+            background-color: var(--ink-bg);
+            border-radius: 12px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 90px;
+            background-color: var(--ink-white);
+            border-right: 1px solid var(--ink-light-gray);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .nav-item {
+            width: 100%;
+            height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-gray);
+            cursor: pointer;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .nav-item i { font-size: 24px; margin-bottom: 5px; }
+        .nav-item span { font-size: 12px; }
+
+        .nav-item.active {
+            color: var(--ink-black);
+            font-weight: bold;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15px;
+            bottom: 15px;
+            width: 4px;
+            background-color: var(--ink-black);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: var(--ink-white);
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            font-size: 14px;
+            color: var(--ink-dark-gray);
+            border-bottom: 1px solid transparent;
+        }
+
+        /* 资料模块容器 */
+        .material-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            background-color: var(--ink-bg);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* 控制栏 */
+        .material-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: var(--ink-bg);
+            flex-shrink: 0;
+            gap: 15px;
+        }
+
+        /* 筛选器组 */
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* 下拉选择器样式 */
+        .filter-select-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-select-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--ink-white);
+            border: 1px solid var(--ink-light-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--ink-dark-gray);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-select-btn:hover {
+            border-color: var(--ink-gray);
+        }
+
+        .filter-select-btn.active {
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+            border-color: var(--ink-black);
+        }
+
+        .filter-select-btn i { font-size: 11px; }
+
+        /* 隐藏的原生选择器 */
+        .filter-select-native {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        /* 日期选择器 */
+        .date-picker-wrapper {
+            position: relative;
+        }
+
+        .date-picker-trigger {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        /* 搜索框 */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--ink-white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            width: 160px;
+            border: 1px solid var(--ink-light-gray);
+            transition: all 0.2s;
+        }
+
+        .search-box:focus-within {
+            width: 200px;
+            border-color: var(--ink-black);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 13px;
+            background: transparent;
+        }
+
+        .search-box i { font-size: 12px; color: var(--ink-gray); }
+
+        /* 内容区域 */
+        .material-content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 24px 24px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .material-content-area::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 资料宫格布局 */
+        .material-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            column-gap: 20px;
+            row-gap: 18px;
+            padding: 8px 0;
+        }
+
+        /* 资料卡片 */
+        .material-item {
+            display: flex;
+            flex-direction: column;
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            gap: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .material-item:active {
+            transform: scale(0.98);
+        }
+
+        /* 缩略图容器 */
+        .material-thumb {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background-color: var(--ink-white);
+            border: 1px solid var(--ink-light-gray);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .material-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%); /* 图片去色 */
+        }
+
+        .material-thumb .thumb-icon {
+            font-size: 48px;
+            color: var(--ink-gray);
+        }
+
+        /* 模拟文档缩略图 */
+        .doc-preview-mock {
+            width: 70%;
+            height: 80%;
+            background: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .doc-line {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            width: 100%;
+        }
+        .doc-line.short { width: 60%; }
+        .doc-line.medium { width: 80%; }
+        .doc-line.title { height: 6px; background: #999; margin-bottom: 4px; width: 50%; align-self: center; }
+
+        .thumb-tag {
+            position: absolute;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 2;
+        }
+        .thumb-tag.subject {
+            top: 6px;
+            left: 6px;
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+        }
+        .thumb-tag.source {
+            top: 6px;
+            right: 6px;
+            background-color: var(--ink-white);
+            color: var(--ink-black);
+            border: 1px solid var(--ink-black);
+        }
+
+        .material-info {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 居中 */
+            text-align: center; /* 居中 */
+            gap: 4px;
+        }
+
+        .material-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--ink-black);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal;
+            line-height: 1.3;
+            height: 36px;
+        }
+
+        .material-date {
+            font-size: 10px;
+            color: var(--ink-gray);
+            margin-top: 2px;
+        }
+
+        /* 快捷上传卡片 */
+        .upload-card {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background-color: var(--ink-bg);
+            border: 2px dashed var(--ink-gray);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-card:hover {
+            background-color: var(--ink-white);
+            border-color: var(--ink-black);
+        }
+
+        .upload-card i {
+            font-size: 32px;
+            color: var(--ink-gray);
+        }
+
+        .upload-card span {
+            font-size: 14px;
+            color: var(--ink-gray);
+            font-weight: bold;
+        }
+        
+        .upload-card:hover i,
+        .upload-card:hover span {
+            color: var(--ink-black);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px;
+            color: var(--ink-gray);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--ink-dark-gray);
+            margin-bottom: 8px;
+        }
+
+        /* 预览层 */
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--ink-white);
+            z-index: 300;
+            display: none;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            height: 60px;
+            border-bottom: 2px solid var(--ink-black);
+            display: flex;
+            justify-content: flex-start; /* 改为左对齐 */
+            align-items: center;
+            padding: 0 25px;
+            background-color: var(--ink-white);
+            flex-shrink: 0;
+            gap: 20px; /* 增加间距 */
+        }
+
+        .preview-back {
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-title {
+            font-size: 18px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1; /* 占据剩余空间 */
+        }
+
+        .preview-close {
+            display: none; /* 隐藏关闭按钮 */
+        }
+
+        .preview-content {
+            flex: 1;
+            overflow-y: auto;
+            background-color: #e6e6e6;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .doc-page {
+            width: 100%;
+            max-width: 680px;
+            background-color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 50px 40px;
+            min-height: 100%;
+            color: black;
+            font-family: "Songti SC", "SimSun", serif;
+        }
+
+        .doc-page h1 {
+            text-align: center;
+            border-bottom: 1px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .doc-page p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-indent: 2em;
+            text-align: justify;
+            font-size: 16px;
+        }
+
+        /* AI 助手按钮 */
+        .ai-assistant-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background-color: var(--ink-white);
+            border: 1px solid var(--ink-black);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ai-assistant-btn:hover {
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+        }
+
+        .ai-assistant-btn img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: grayscale(100%);
+        }
+
+        .ai-assistant-btn span {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* AI 聊天弹窗 */
+        .ai-chat-modal {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background-color: var(--ink-white);
+            border-top: 2px solid var(--ink-black);
+            border-radius: 24px 24px 0 0;
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .ai-chat-modal.show {
+            display: flex;
+            transform: translateY(0);
+        }
+
+        .ai-chat-header {
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--ink-light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-chat-title {
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-chat-close {
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .ai-chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--ink-light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--ink-black);
+            flex-shrink: 0;
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            filter: grayscale(100%);
+        }
+
+        .chat-bubble {
+            background-color: var(--ink-bg);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--ink-light-gray);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .chat-message.user .chat-bubble {
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+            border-color: var(--ink-black);
+        }
+
+        /* AI 生成内容卡片 */
+        .ai-content-card {
+            background-color: var(--ink-white);
+            border: 1px solid var(--ink-black);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .ai-card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--ink-light-gray);
+            padding-bottom: 5px;
+        }
+
+        .ai-card-content {
+            font-size: 13px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .mind-map-preview {
+            width: 100%;
+            height: 150px;
+            background-color: var(--ink-bg);
+            border: 1px dashed var(--ink-gray);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .save-note-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 8px;
+            background-color: var(--ink-white);
+            border: 1px solid var(--ink-black);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .save-note-btn:hover {
+            background-color: var(--ink-bg);
+        }
+
+        .save-note-btn.saved {
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+        }
+
+        /* 底部输入区 */
+        .ai-chat-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--ink-light-gray);
+            background-color: var(--ink-white);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .quick-action-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--ink-black);
+            border-radius: 16px;
+            font-size: 12px;
+            background: var(--ink-white);
+            white-space: nowrap;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .quick-action-btn:hover {
+            background-color: var(--ink-bg);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--ink-black);
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* 弹窗通用样式 */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 400;
+        }
+
+        .modal {
+            background-color: var(--ink-white);
+            border: 2px solid var(--ink-black);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            width: 500px;
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* 上传方式选择 */
+        .upload-options {
+            display: flex;
+            gap: 30px;
+            justify-content: space-between;
+        }
+
+        .upload-option {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border: 1px solid var(--ink-light-gray);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-option:hover {
+            border-color: var(--ink-black);
+            background-color: var(--ink-bg);
+        }
+
+        .upload-option-icon {
+            font-size: 40px;
+            color: var(--ink-dark-gray);
+            margin-bottom: 10px;
+        }
+
+        .upload-option-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .upload-option-desc {
+            font-size: 12px;
+            color: var(--ink-gray);
+            text-align: center;
+        }
+
+        .qr-code-placeholder {
+            width: 120px;
+            height: 120px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .qr-code-placeholder i {
+            font-size: 60px;
+            color: #ccc;
+        }
+
+        /* 拍照界面 - 全屏模式 */
+        .camera-modal {
+            z-index: 500; /* 确保在最上层 */
+        }
+
+        .camera-modal .modal {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+            border: none;
+            border-radius: 12px; /* 匹配屏幕圆角 */
+            background-color: #000;
+        }
+
+        .camera-preview {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 相机取景框 */
+        .camera-focus-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%); /* 略微上移，避开底部栏 */
+            width: 70%;
+            aspect-ratio: 3/4;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); /* 周围变暗 */
+            pointer-events: none;
+        }
+        
+        .camera-focus-frame::before, .camera-focus-frame::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: #fff;
+            border-style: solid;
+            transition: all 0.2s;
+        }
+        
+        .camera-focus-frame::before {
+            top: -2px;
+            left: -2px;
+            border-width: 4px 0 0 4px;
+            border-radius: 4px 0 0 0;
+        }
+        
+        .camera-focus-frame::after {
+            bottom: -2px;
+            right: -2px;
+            border-width: 0 4px 4px 0;
+            border-radius: 0 0 4px 0;
+        }
+
+        .camera-preview-placeholder {
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .camera-preview-placeholder i {
+            font-size: 60px;
+            opacity: 0.5;
+        }
+
+        .photo-list {
+            position: absolute;
+            bottom: 140px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 15px;
+            overflow-x: auto;
+            border: none;
+            z-index: 10;
+        }
+
+        .photo-item {
+            width: 70px;
+            height: 70px;
+            background-color: #333;
+            border: 1px solid #666;
+            border-radius: 4px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            border: none;
+            z-index: 10;
+        }
+
+        .camera-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+
+        .camera-btn.capture {
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            color: #000;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .camera-btn.text-btn {
+            width: auto;
+            height: 40px;
+            border-radius: 20px;
+            padding: 0 24px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* 带图标的输入框 */
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-with-icon .form-input {
+            padding-right: 40px;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            right: 12px;
+            font-size: 20px;
+            color: var(--ink-dark-gray);
+            cursor: pointer;
+        }
+
+        /* 虚拟键盘 */
+        .virtual-keyboard {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #d1d5db;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .virtual-keyboard.show {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .key {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 10px;
+            min-width: 32px;
+            text-align: center;
+            font-size: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .key:active {
+            background-color: #e5e7eb;
+        }
+        
+        .key.wide {
+            flex: 1.5;
+        }
+        
+        .key.space {
+            flex: 4;
+        }
+
+        /* 管理按钮 */
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--ink-white);
+            border: 1px solid var(--ink-light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--ink-dark-gray);
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--ink-black);
+            color: var(--ink-black);
+        }
+
+        .icon-btn.active {
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+            border-color: var(--ink-black);
+        }
+
+        /* 批量删除按钮 */
+        .delete-batch-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            background-color: var(--ink-white);
+            border: 1px solid var(--ink-black);
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--ink-black);
+            cursor: pointer;
+            height: 36px;
+        }
+
+        .delete-batch-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 管理模式下的卡片样式 */
+        .material-item.manage-mode-item {
+            position: relative;
+        }
+
+        .material-item.manage-mode-item.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .item-checkbox {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--ink-gray);
+            background-color: var(--ink-white);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .material-item.selected .item-checkbox {
+            background-color: var(--ink-black);
+            border-color: var(--ink-black);
+            color: var(--ink-white);
+        }
+
+        .material-item.selected .material-thumb {
+            border-color: var(--ink-black);
+            box-shadow: 0 0 0 2px var(--ink-black);
+        }
+
+        .item-checkbox i {
+            font-size: 12px;
+            display: none;
+        }
+
+        .material-item.selected .item-checkbox i {
+            display: block;
+        }
+
+        /* Toast */
+        .toast {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+            padding: 15px 40px;
+            border-radius: 40px;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+        .name-modal {
+            z-index: 600 !important;
+        }
+
+        .name-modal .modal {
+            width: 400px;
+            background-color: var(--ink-white); /* 确保背景不透明 */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--ink-black);
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            border: 1px solid var(--ink-black);
+        }
+
+        .btn-cancel {
+            background-color: var(--ink-white);
+            color: var(--ink-black);
+        }
+
+        .btn-confirm {
+            background-color: var(--ink-black);
+            color: var(--ink-white);
+        }
+
+        /* 常用资料：位于筛选栏下方，以资料卡片形式横向切换 */
+        .textbook-materials {
+            padding: 8px 14px 10px;
+            background: var(--ink-bg);
+            border-bottom: 1px solid var(--ink-light-gray);
+            flex-shrink: 0;
+        }
+
+        .textbook-materials-header {
+            display: flex;
+            align-items: center;
+            padding: 0 18px 6px;
+        }
+
+        .textbook-materials-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--ink-black);
+        }
+
+        .textbook-carousel {
+            display: grid;
+            grid-template-columns: 28px minmax(0, 1fr) 28px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .textbook-carousel-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid var(--ink-gray);
+            border-radius: 50%;
+            background: var(--ink-white);
+            color: var(--ink-black);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .textbook-carousel-btn:disabled {
+            color: #b5b5b5;
+            border-color: var(--ink-light-gray);
+            background: #f2f2f2;
+            cursor: default;
+        }
+
+        .textbook-carousel-grid {
+            width: 100%;
+            max-width: 440px;
+            min-width: 0;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            justify-self: center;
+        }
+
+        .textbook-material-card {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .textbook-material-card:active {
+            transform: scale(0.98);
+        }
+
+        .textbook-material-card .material-thumb {
+            aspect-ratio: 3 / 4;
+        }
+
+        .textbook-cover-sheet {
+            width: 66%;
+            height: 82%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            background: var(--ink-white);
+            border: 1px solid var(--ink-dark-gray);
+            border-left: 5px solid var(--ink-black);
+            border-radius: 2px 5px 5px 2px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.08);
+        }
+
+        .textbook-cover-subject {
+            font-family: "Songti SC", serif;
+            font-size: 17px;
+            font-weight: bold;
+            color: var(--ink-black);
+        }
+
+        .textbook-cover-grade {
+            font-size: 9px;
+            color: var(--ink-gray);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="device-shell">
+        <div class="device-screen">
+            
+            <!-- 侧边栏（与首页.html 保持一致） -->
+            <div class="sidebar">
+                <div class="nav-item" onclick="window.location.href='../首页.html'">
+                    <i class="fas fa-robot"></i>
+                    <span>AI助教</span>
+                </div>
+                <div class="nav-item active">
+                    <i class="fas fa-briefcase"></i>
+                    <span>书包</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='../练习/练习.html'">
+                    <i class="fas fa-book-open"></i>
+                    <span>练习</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='../阅读/阅读.html'">
+                    <i class="fas fa-book-reader"></i>
+                    <span>阅读</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='../写作/写作.html'">
+                    <i class="fas fa-pen-nib"></i>
+                    <span>写作</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='../错题本/错题本.html'">
+                    <i class="fas fa-xmark"></i>
+                    <span>错题本</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='../笔记/笔记.html'">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>笔记</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='../万能本/万能本.html'">
+                    <i class="fas fa-book-bookmark"></i>
+                    <span>万能本</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='../我的/我的.html'">
+                    <i class="fas fa-user"></i>
+                    <span>我的</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='../设置/设置.html'">
+                    <i class="fas fa-gear"></i>
+                    <span>设置</span>
+                </div>
+            </div>
+
+            <!-- 主内容区 -->
+            <div class="main-content">
+                <!-- 状态栏 -->
+                <div class="status-bar">
+                    <div id="current-date">周五 3月6日</div>
+                    <div>11:52 85%</div>
+                </div>
+
+                <!-- 资料内容 -->
+                <div class="material-container">
+                    
+                    <!-- 控制栏 -->
+                    <div class="material-controls" id="material-controls">
+                        <!-- 筛选器组 -->
+                        <div class="filter-group">
+                            <!-- 来源筛选 -->
+                            <div class="filter-select-wrapper">
+                                <div class="filter-select-btn" id="source-filter-btn">
+                                    <span id="source-label">全部来源</span>
+                                    <i class="fas fa-caret-down"></i>
+                                </div>
+                                <select class="filter-select-native" id="source-select" onchange="handleSourceChange(this)">
+                                    <option value="all">全部来源</option>
+                                    <option value="teacher">老师</option>
+                                    <option value="self">自己</option>
+                                </select>
+                            </div>
+
+                            <!-- 学科筛选 -->
+                            <div class="filter-select-wrapper">
+                                <div class="filter-select-btn" id="subject-filter-btn">
+                                    <span id="subject-label">全部学科</span>
+                                    <i class="fas fa-caret-down"></i>
+                                </div>
+                                <select class="filter-select-native" id="subject-select" onchange="handleSubjectChange(this)">
+                                    <option value="all">全部学科</option>
+                                    <option value="yuwen">语文</option>
+                                    <option value="shuxue">数学</option>
+                                    <option value="yingyu">英语</option>
+                                    <option value="kexue">科学</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+
+                            <!-- 日期筛选 -->
+                            <div class="filter-select-wrapper date-picker-wrapper">
+                                <div class="filter-select-btn" id="date-filter-btn">
+                                    <span id="date-label">全部日期</span>
+                                    <i class="fas fa-caret-down"></i>
+                                </div>
+                                <input type="date" class="date-picker-trigger" id="date-picker" onchange="handleDateChange(this)">
+                            </div>
+                        </div>
+
+                        <!-- 搜索框 -->
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div class="icon-btn" id="manage-btn" onclick="toggleManageMode()" title="管理文件">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            
+                            <div class="search-box" id="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="material-search" placeholder="搜索资料..." oninput="filterMaterials()">
+                            </div>
+
+                            <button class="delete-batch-btn" id="delete-batch-btn" style="display: none;" onclick="openDeleteConfirmModal()">
+                                <i class="fas fa-trash"></i> 删除 (<span id="selected-count">0</span>)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 常用资料卡片轮播 -->
+                    <section class="textbook-materials" aria-label="常用资料">
+                        <div class="textbook-materials-header">
+                            <div class="textbook-materials-title">常用资料</div>
+                        </div>
+                        <div class="textbook-carousel">
+                            <button type="button" class="textbook-carousel-btn" id="textbook-prev-btn" aria-label="查看前面的常用资料" onclick="moveTextbookCarousel(-1)">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="textbook-carousel-grid" id="textbook-carousel-grid">
+                                <!-- 教材卡片由 JS 渲染 -->
+                            </div>
+                            <button type="button" class="textbook-carousel-btn" id="textbook-next-btn" aria-label="查看后面的常用资料" onclick="moveTextbookCarousel(1)">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- 内容区域 -->
+                    <div class="material-content-area">
+                        <div id="material-list" class="material-grid">
+                            <!-- 资料列表将通过 JS 动态生成 -->
+                        </div>
+
+                        <!-- 空状态 -->
+                        <div id="empty-state" class="empty-state" style="display: none;">
+                            <i class="far fa-folder-open"></i>
+                            <div class="empty-state-title">暂无资料</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预览层 -->
+            <div class="preview-overlay" id="preview-overlay">
+                <div class="preview-header">
+                    <div class="preview-back" onclick="closePreview()">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="preview-title" id="preview-title">文档标题</div>
+                    <div class="ai-assistant-btn" onclick="openAiChat()">
+                        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=DragonTeacher&backgroundColor=transparent" alt="Teacher">
+                        <span>问问龙老师</span>
+                    </div>
+                </div>
+                <div class="preview-content" id="preview-content">
+                    <!-- 内容动态注入 -->
+                </div>
+            </div>
+
+            <!-- AI 聊天弹窗 -->
+            <div class="modal-overlay" id="ai-chat-overlay" style="z-index: 450; background-color: rgba(0,0,0,0.5);" onclick="closeAiChat()"></div>
+            <div class="ai-chat-modal" id="ai-chat-modal">
+                <div class="ai-chat-header">
+                    <div class="ai-chat-title">
+                        <div class="chat-avatar" style="width: 30px; height: 30px;">
+                            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=DragonTeacher&backgroundColor=transparent" alt="Teacher">
+                        </div>
+                        <span>龙老师 AI 助手</span>
+                    </div>
+                    <div class="ai-chat-close" onclick="closeAiChat()">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="ai-chat-body" id="ai-chat-body">
+                    <div class="chat-message ai">
+                        <div class="chat-avatar">
+                            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=DragonTeacher&backgroundColor=transparent" alt="Teacher">
+                        </div>
+                        <div class="chat-bubble">
+                            你好！我是龙老师。关于这份资料，你有什么想问的吗？我可以帮你总结重点，或者生成脑图和测验。
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-chat-footer">
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="handleQuickAction('summary')"><i class="fas fa-file-alt"></i> 总结</button>
+                        <button class="quick-action-btn" onclick="handleQuickAction('mindmap')"><i class="fas fa-project-diagram"></i> 生成脑图</button>
+                        <button class="quick-action-btn" onclick="handleQuickAction('quiz')"><i class="fas fa-question-circle"></i> 生成测验</button>
+                    </div>
+                    <div class="chat-input-wrapper">
+                        <input type="text" class="chat-input" placeholder="输入你的问题..." id="ai-chat-input">
+                        <div class="send-btn" onclick="sendAiMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上传方式选择弹窗 -->
+            <div class="modal-overlay" id="upload-method-modal">
+                <div class="modal" style="position: relative;">
+                    <div class="modal-header">选择上传方式</div>
+                    <div class="modal-close" style="position: absolute; top: 20px; right: 20px; cursor: pointer;" onclick="closeUploadModal()">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <div class="upload-options">
+                        <!-- 扫码上传 -->
+                        <div class="upload-option">
+                            <div class="qr-code-placeholder">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <div class="upload-option-title">扫码上传</div>
+                            <div class="upload-option-desc">微信扫码上传文件</div>
+                        </div>
+                        <!-- 拍照上传 -->
+                        <div class="upload-option" onclick="openCamera()">
+                            <div class="upload-option-icon">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <div class="upload-option-title">拍照上传</div>
+                            <div class="upload-option-desc">拍摄作业或资料</div>
+                            <button class="camera-btn text-btn" style="margin-top: 10px; background: var(--ink-black); color: white;">去拍照</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 拍照界面弹窗 -->
+            <div class="modal-overlay camera-modal" id="camera-modal">
+                <div class="modal">
+                    <div class="camera-preview">
+                        <div class="camera-focus-frame"></div>
+                        <div class="camera-preview-placeholder">
+                            <i class="fas fa-camera"></i>
+                            <span>相机预览区域</span>
+                        </div>
+                    </div>
+                    <div class="photo-list" id="photo-list">
+                        <!-- 已拍摄照片 -->
+                    </div>
+                    <div class="camera-controls">
+                        <button class="camera-btn text-btn" onclick="closeCamera()">取消</button>
+                        <button class="camera-btn capture" onclick="takePhoto()"></button>
+                        <button class="camera-btn text-btn" onclick="savePhotos()">保存</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文件命名弹窗 -->
+            <div class="modal-overlay name-modal" id="name-modal">
+                <div class="modal">
+                    <div class="modal-header">保存文件</div>
+                    <div class="form-group input-with-icon">
+                        <input type="text" class="form-input" id="file-name-input" placeholder="请输入文件名称" onclick="showKeyboard(event)">
+                        <i class="fas fa-microphone" onclick="startVoiceInput()"></i>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-modal btn-cancel" onclick="closeNameModal()">取消</button>
+                        <button class="btn-modal btn-confirm" onclick="confirmUpload()">确认</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 虚拟键盘 -->
+            <div class="virtual-keyboard" id="virtual-keyboard">
+                <div class="keyboard-row">
+                    <div class="key" onclick="typeKey('1')">1</div>
+                    <div class="key" onclick="typeKey('2')">2</div>
+                    <div class="key" onclick="typeKey('3')">3</div>
+                    <div class="key" onclick="typeKey('4')">4</div>
+                    <div class="key" onclick="typeKey('5')">5</div>
+                    <div class="key" onclick="typeKey('6')">6</div>
+                    <div class="key" onclick="typeKey('7')">7</div>
+                    <div class="key" onclick="typeKey('8')">8</div>
+                    <div class="key" onclick="typeKey('9')">9</div>
+                    <div class="key" onclick="typeKey('0')">0</div>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key" onclick="typeKey('q')">q</div>
+                    <div class="key" onclick="typeKey('w')">w</div>
+                    <div class="key" onclick="typeKey('e')">e</div>
+                    <div class="key" onclick="typeKey('r')">r</div>
+                    <div class="key" onclick="typeKey('t')">t</div>
+                    <div class="key" onclick="typeKey('y')">y</div>
+                    <div class="key" onclick="typeKey('u')">u</div>
+                    <div class="key" onclick="typeKey('i')">i</div>
+                    <div class="key" onclick="typeKey('o')">o</div>
+                    <div class="key" onclick="typeKey('p')">p</div>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key" onclick="typeKey('a')">a</div>
+                    <div class="key" onclick="typeKey('s')">s</div>
+                    <div class="key" onclick="typeKey('d')">d</div>
+                    <div class="key" onclick="typeKey('f')">f</div>
+                    <div class="key" onclick="typeKey('g')">g</div>
+                    <div class="key" onclick="typeKey('h')">h</div>
+                    <div class="key" onclick="typeKey('j')">j</div>
+                    <div class="key" onclick="typeKey('k')">k</div>
+                    <div class="key" onclick="typeKey('l')">l</div>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key wide" onclick="typeKey('shift')">Shift</div>
+                    <div class="key" onclick="typeKey('z')">z</div>
+                    <div class="key" onclick="typeKey('x')">x</div>
+                    <div class="key" onclick="typeKey('c')">c</div>
+                    <div class="key" onclick="typeKey('v')">v</div>
+                    <div class="key" onclick="typeKey('b')">b</div>
+                    <div class="key" onclick="typeKey('n')">n</div>
+                    <div class="key" onclick="typeKey('m')">m</div>
+                    <div class="key wide" onclick="typeKey('backspace')">⌫</div>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key wide" onclick="hideKeyboard()">123</div>
+                    <div class="key space" onclick="typeKey('space')">Space</div>
+                    <div class="key wide" onclick="hideKeyboard()">Done</div>
+                </div>
+            </div>
+
+            <!-- 批量删除确认弹窗 -->
+            <div class="modal-overlay delete-confirm-modal" id="delete-confirm-modal">
+                <div class="modal">
+                    <div class="modal-header">确认删除</div>
+                    <div style="text-align: center; margin-bottom: 20px; font-size: 16px;">
+                        确定要删除选中的 <span id="delete-count-display" style="font-weight: bold;">0</span> 个文件吗？<br>
+                        <span style="font-size: 14px; color: var(--ink-gray);">此操作不可恢复。</span>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-modal btn-cancel" onclick="closeDeleteConfirmModal()">取消</button>
+                        <button class="btn-modal btn-confirm" onclick="executeDelete()">删除</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast -->
+            <div class="toast" id="toast">操作成功！</div>
+
+        </div>
+    </div>
+
+    <script>
+        // 常用资料轮播，一次移动一张
+        const textbookMaterials = [
+            { title: '语文', grade: '三年级下册' },
+            { title: '数学', grade: '三年级下册' },
+            { title: '英语', grade: '三年级下册' },
+            { title: '科学', grade: '三年级下册' },
+            { title: '道德与法治', grade: '三年级下册' }
+        ];
+        const textbookVisibleCount = 3;
+        let textbookStartIndex = 0;
+
+        function renderTextbookCarousel() {
+            const grid = document.getElementById('textbook-carousel-grid');
+            const prevBtn = document.getElementById('textbook-prev-btn');
+            const nextBtn = document.getElementById('textbook-next-btn');
+            const visibleBooks = textbookMaterials.slice(
+                textbookStartIndex,
+                textbookStartIndex + textbookVisibleCount
+            );
+
+            grid.innerHTML = visibleBooks.map(book => `
+                <button type="button" class="textbook-material-card" onclick="openTextbookMaterial('${book.title}', '${book.grade}')">
+                    <span class="material-thumb">
+                        <span class="textbook-cover-sheet">
+                            <span class="textbook-cover-subject">${book.title}</span>
+                            <span class="textbook-cover-grade">${book.grade}</span>
+                        </span>
+                    </span>
+                </button>
+            `).join('');
+
+            const endIndex = Math.min(
+                textbookStartIndex + textbookVisibleCount,
+                textbookMaterials.length
+            );
+            prevBtn.disabled = textbookStartIndex === 0;
+            nextBtn.disabled = endIndex === textbookMaterials.length;
+        }
+
+        function moveTextbookCarousel(direction) {
+            const maxStartIndex = Math.max(0, textbookMaterials.length - textbookVisibleCount);
+            textbookStartIndex = Math.min(
+                maxStartIndex,
+                Math.max(0, textbookStartIndex + direction)
+            );
+            renderTextbookCarousel();
+        }
+
+        function openTextbookMaterial(title, grade) {
+            openMaterial(`${title}（${grade}）`, 'pdf');
+        }
+
+        // 资料数据
+        const materials = [
+            { id: 'c1', title: '本周家长会通知.pdf', type: 'pdf', subject: 'yuwen', source: 'teacher', date: '2026-03-06', thumb: 'https://placehold.co/150x200/eee/333?text=PDF' },
+            { id: 'm1', title: '错题整理-小数乘法.jpg', type: 'img', subject: 'shuxue', source: 'self', date: '2026-03-06', thumb: 'https://placehold.co/150x200/e0f7fa/006064?text=Image' },
+            { id: 'c2', title: '数学第三单元复习大纲.png', type: 'img', subject: 'shuxue', source: 'teacher', date: '2026-03-05', thumb: 'https://placehold.co/150x200/e8f5e9/1b5e20?text=Image' },
+            { id: 'm2', title: '古诗词背诵计划.txt', type: 'doc', subject: 'yuwen', source: 'self', date: '2026-03-05', thumb: 'https://placehold.co/150x200/fff3e0/e65100?text=TXT' },
+            { id: 'c3', title: 'Unit 3 听力材料.mp3', type: 'audio', subject: 'yingyu', source: 'teacher', date: '2026-03-05', thumb: null },
+            { id: 'm3', title: '单词卡片-Unit3.png', type: 'img', subject: 'yingyu', source: 'self', date: '2026-03-04', thumb: 'https://placehold.co/150x200/f3e5f5/4a148c?text=Image' },
+            { id: 'c4', title: '语文必背古诗词汇总.docx', type: 'doc', subject: 'yuwen', source: 'teacher', date: '2026-03-03', thumb: 'https://placehold.co/150x200/e3f2fd/0d47a1?text=DOCX' },
+            { id: 'm4', title: '植物观察日记.jpg', type: 'img', subject: 'kexue', source: 'self', date: '2026-03-02', thumb: 'https://placehold.co/150x200/f1f8e9/33691e?text=Image' },
+            { id: 'c5', title: 'Unit 1-2 单词表.pdf', type: 'pdf', subject: 'yingyu', source: 'teacher', date: '2026-03-02', thumb: 'https://placehold.co/150x200/ffebee/b71c1c?text=PDF' },
+            { id: 'c6', title: '植物生长观察记录.mp4', type: 'video', subject: 'kexue', source: 'teacher', date: '2026-03-01', thumb: null },
+            { id: 'c7', title: '奥数竞赛真题集.pdf', type: 'pdf', subject: 'shuxue', source: 'teacher', date: '2026-02-28', thumb: 'https://placehold.co/150x200/fff8e1/ff6f00?text=PDF' },
+            { id: 'c8', title: '书法比赛获奖作品展.jpg', type: 'img', subject: 'yuwen', source: 'teacher', date: '2026-02-27', thumb: 'https://placehold.co/150x200/fce4ec/880e4f?text=Image' }
+        ];
+
+        // 状态
+        let currentSource = 'all';
+        let currentSubject = 'all';
+        let currentDate = '';
+        let capturedPhotos = [];
+        let isManageMode = false;
+        let selectedFiles = new Set();
+
+        // 更新日期
+        const dateEl = document.getElementById('current-date');
+        const now = new Date();
+        const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        dateEl.innerText = `${days[now.getDay()]} ${now.getMonth() + 1}月${now.getDate()}日`;
+
+        // 初始化
+        renderTextbookCarousel();
+        renderMaterials();
+
+        // 渲染资料列表
+        function renderMaterials() {
+            const listEl = document.getElementById('material-list');
+            const emptyState = document.getElementById('empty-state');
+            const searchText = document.getElementById('material-search').value.toLowerCase();
+            
+            listEl.innerHTML = '';
+
+            // 只有非管理模式才显示上传入口
+            if (!isManageMode) {
+                const uploadEntry = document.createElement('div');
+                uploadEntry.className = 'material-item';
+                uploadEntry.innerHTML = `
+                    <div class="upload-card" onclick="openUploadModal()">
+                        <i class="fas fa-plus"></i>
+                        <span>上传文件</span>
+                    </div>
+                `;
+                listEl.appendChild(uploadEntry);
+            }
+            
+            let visibleCount = 0;
+
+            materials.forEach(item => {
+                // 筛选逻辑
+                const sourceMatch = currentSource === 'all' || item.source === currentSource;
+                const subjectMatch = currentSubject === 'all' || item.subject === currentSubject;
+                const dateMatch = !currentDate || item.date === currentDate;
+                const searchMatch = item.title.toLowerCase().includes(searchText);
+
+                if (sourceMatch && subjectMatch && dateMatch && searchMatch) {
+                    visibleCount++;
+                    const el = createMaterialElement(item);
+                    listEl.appendChild(el);
+                }
+            });
+
+            // 如果只有上传入口(非管理模式)或者完全为空(管理模式)，且有筛选条件，可能也需要显示空状态
+            // 简单处理：如果 visibleCount 为 0，显示空状态
+            if (visibleCount === 0) {
+                emptyState.style.display = 'flex';
+            } else {
+                emptyState.style.display = 'none';
+            }
+        }
+
+        // 创建资料元素
+        function createMaterialElement(item) {
+            const div = document.createElement('div');
+            div.className = 'material-item';
+            
+            // 管理模式逻辑
+            if (isManageMode) {
+                div.classList.add('manage-mode-item');
+                
+                if (item.source === 'self') {
+                    // 自己的文件可选
+                    if (selectedFiles.has(item.id)) {
+                        div.classList.add('selected');
+                    }
+                    div.onclick = () => toggleFileSelection(item.id);
+                } else {
+                    // 老师的文件不可选
+                    div.classList.add('disabled');
+                    div.onclick = () => { /* 不可点击 */ };
+                }
+            } else {
+                // 普通模式点击预览
+                div.onclick = () => openMaterial(item.title, item.type);
+            }
+
+            // 缩略图处理
+            let thumbContent = '';
+            if (item.type === 'audio') {
+                thumbContent = '<i class="fas fa-music thumb-icon"></i>';
+            } else if (item.type === 'video') {
+                thumbContent = '<i class="fas fa-play-circle thumb-icon"></i>';
+            } else if (item.type === 'pdf' || item.type === 'doc') {
+                // 模拟文档缩略图
+                thumbContent = `
+                    <div class="doc-preview-mock">
+                        <div class="doc-line title"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line medium"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line short"></div>
+                        <div class="doc-line"></div>
+                    </div>
+                `;
+            } else {
+                thumbContent = `<img src="${item.thumb}" alt="${item.title}">`;
+            }
+
+            // 标签文本映射
+            const subjectMap = {
+                'yuwen': '语文', 'shuxue': '数学', 'yingyu': '英语', 'kexue': '科学', 'other': '其他'
+            };
+            const sourceMap = {
+                'teacher': '老师', 'self': '自己'
+            };
+
+            // 管理模式下的复选框
+            let checkboxHtml = '';
+            if (isManageMode && item.source === 'self') {
+                checkboxHtml = `
+                    <div class="item-checkbox">
+                        <i class="fas fa-check"></i>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
+                <div class="material-thumb">
+                    ${thumbContent}
+                    ${checkboxHtml}
+                    <span class="thumb-tag source">${sourceMap[item.source]}</span>
+                </div>
+                <div class="material-info">
+                    <div class="material-title">${item.title}</div>
+                    <div class="material-date">${item.date}</div>
+                </div>
+            `;
+            return div;
+        }
+
+        // 管理模式相关函数
+        function toggleManageMode() {
+            isManageMode = !isManageMode;
+            selectedFiles.clear();
+            updateSelectedCount();
+
+            const manageBtn = document.getElementById('manage-btn');
+            const searchBox = document.getElementById('search-box');
+            const deleteBtn = document.getElementById('delete-batch-btn');
+            const icon = manageBtn.querySelector('i');
+
+            if (isManageMode) {
+                manageBtn.classList.add('active');
+                icon.className = 'fas fa-times'; // 变为退出图标
+                searchBox.style.display = 'none';
+                deleteBtn.style.display = 'flex';
+            } else {
+                manageBtn.classList.remove('active');
+                icon.className = 'fas fa-tasks'; // 恢复管理图标
+                searchBox.style.display = 'flex';
+                deleteBtn.style.display = 'none';
+            }
+
+            renderMaterials();
+        }
+
+        function toggleFileSelection(id) {
+            if (selectedFiles.has(id)) {
+                selectedFiles.delete(id);
+            } else {
+                selectedFiles.add(id);
+            }
+            updateSelectedCount();
+            renderMaterials(); // 重新渲染以更新选中样式
+        }
+
+        function updateSelectedCount() {
+            document.getElementById('selected-count').innerText = selectedFiles.size;
+        }
+
+        function openDeleteConfirmModal() {
+            if (selectedFiles.size === 0) {
+                alert('请先选择要删除的文件');
+                return;
+            }
+            document.getElementById('delete-count-display').innerText = selectedFiles.size;
+            document.getElementById('delete-confirm-modal').style.display = 'flex';
+        }
+
+        function closeDeleteConfirmModal() {
+            document.getElementById('delete-confirm-modal').style.display = 'none';
+        }
+
+        function executeDelete() {
+            // 执行删除逻辑
+            for (let i = materials.length - 1; i >= 0; i--) {
+                if (selectedFiles.has(materials[i].id)) {
+                    materials.splice(i, 1);
+                }
+            }
+            
+            closeDeleteConfirmModal();
+            toggleManageMode(); // 退出管理模式
+            
+            // 提示删除成功 (这里简单用 alert，实际可以用 Toast)
+            // alert('删除成功');
+        }
+
+        // 筛选处理
+        function handleSourceChange(select) {
+            currentSource = select.value;
+            const labelMap = { 'all': '全部来源', 'teacher': '老师', 'self': '自己' };
+            document.getElementById('source-label').innerText = labelMap[currentSource];
+            
+            const btn = document.getElementById('source-filter-btn');
+            if (currentSource === 'all') btn.classList.remove('active');
+            else btn.classList.add('active');
+            
+            renderMaterials();
+        }
+
+        function handleSubjectChange(select) {
+            currentSubject = select.value;
+            const labelMap = {
+                'all': '全部学科', 'yuwen': '语文', 'shuxue': '数学', 'yingyu': '英语', 'kexue': '科学', 'other': '其他'
+            };
+            document.getElementById('subject-label').innerText = labelMap[currentSubject];
+            
+            const btn = document.getElementById('subject-filter-btn');
+            if (currentSubject === 'all') btn.classList.remove('active');
+            else btn.classList.add('active');
+            
+            renderMaterials();
+        }
+
+        function handleDateChange(input) {
+            currentDate = input.value;
+            if (currentDate) {
+                document.getElementById('date-label').innerText = currentDate;
+                document.getElementById('date-filter-btn').classList.add('active');
+            } else {
+                document.getElementById('date-label').innerText = '全部日期';
+                document.getElementById('date-filter-btn').classList.remove('active');
+            }
+            renderMaterials();
+        }
+
+        function filterMaterials() {
+            renderMaterials();
+        }
+
+        // 预览功能
+        function openMaterial(title, type) {
+            const overlay = document.getElementById('preview-overlay');
+            const titleEl = document.getElementById('preview-title');
+            const contentEl = document.getElementById('preview-content');
+
+            titleEl.innerText = title;
+            contentEl.innerHTML = '';
+
+            if (type === 'pdf' || type === 'doc') {
+                contentEl.innerHTML = `
+                    <div class="doc-page">
+                        <h1>${title}</h1>
+                        <p>这是文档 "${title}" 的预览内容。</p>
+                        <p>在实际应用中，这里会显示文档的真实内容。目前为演示效果，展示模拟文本。</p>
+                        <p>文档预览功能支持 PDF、Word 等多种格式，方便用户快速浏览资料内容。</p>
+                    </div>
+                `;
+            } else if (type === 'img') {
+                contentEl.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 20px;">
+                        <img src="https://placehold.co/600x400/eee/333?text=${encodeURIComponent(title)}" 
+                             alt="${title}" 
+                             style="max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(100%);">
+                    </div>
+                `;
+            } else if (type === 'audio') {
+                contentEl.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%;">
+                        <i class="fas fa-music" style="font-size: 80px; color: var(--ink-dark-gray); margin-bottom: 60px;"></i>
+                        
+                        <!-- 进度条 -->
+                        <div style="width: 80%; margin-bottom: 40px;">
+                            <div style="width: 100%; height: 4px; background: var(--ink-light-gray); position: relative; border-radius: 2px;">
+                                <div style="width: 35%; height: 100%; background: var(--ink-black); border-radius: 2px;"></div>
+                                <div style="position: absolute; left: 35%; top: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; background: var(--ink-black); border-radius: 50%;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 14px; color: var(--ink-gray);">
+                                <span>01:45</span>
+                                <span>05:30</span>
+                            </div>
+                        </div>
+
+                        <!-- 控制按钮 -->
+                        <div style="display: flex; align-items: center; gap: 50px;">
+                            <i class="fas fa-backward" style="font-size: 28px; cursor: pointer;"></i>
+                            <div style="width: 70px; height: 70px; border-radius: 50%; background: var(--ink-black); color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer;">
+                                <i class="fas fa-pause"></i>
+                            </div>
+                            <i class="fas fa-forward" style="font-size: 28px; cursor: pointer;"></i>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'video') {
+                contentEl.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; background: #000; position: relative;">
+                        <!-- 视频画面模拟 -->
+                        <div style="flex: 1; width: 100%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-play-circle" style="font-size: 80px; color: rgba(255,255,255,0.5);"></i>
+                        </div>
+                        
+                        <!-- 底部控制栏 -->
+                        <div style="width: 100%; padding: 20px 30px; color: white; background: rgba(0,0,0,0.6); position: absolute; bottom: 0; left: 0;">
+                            <!-- 进度条 -->
+                            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.3); margin-bottom: 15px; position: relative; cursor: pointer;">
+                                <div style="width: 40%; height: 100%; background: white;"></div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <i class="fas fa-pause" style="font-size: 20px; cursor: pointer;"></i>
+                                    <span style="font-size: 14px;">05:20 / 15:00</span>
+                                </div>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <i class="fas fa-volume-up" style="font-size: 18px; cursor: pointer;"></i>
+                                    <i class="fas fa-expand" style="font-size: 18px; cursor: pointer;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            overlay.style.display = 'flex';
+        }
+
+        function closePreview() {
+            document.getElementById('preview-overlay').style.display = 'none';
+        }
+
+        // AI 聊天逻辑
+        function openAiChat() {
+            document.getElementById('ai-chat-overlay').style.display = 'block';
+            const modal = document.getElementById('ai-chat-modal');
+            modal.style.display = 'flex';
+            // 强制重绘以触发 transition
+            modal.offsetHeight;
+            modal.classList.add('show');
+        }
+
+        function closeAiChat() {
+            const modal = document.getElementById('ai-chat-modal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.getElementById('ai-chat-overlay').style.display = 'none';
+            }, 300);
+        }
+
+        function sendAiMessage(text = null) {
+            const input = document.getElementById('ai-chat-input');
+            const message = text || input.value.trim();
+            
+            if (!message) return;
+            
+            // 添加用户消息
+            addChatMessage('user', message);
+            input.value = '';
+
+            // 模拟 AI 回复
+            setTimeout(() => {
+                let aiResponse = '这个问题很有趣，让我想想...';
+                // 简单的模拟回复逻辑
+                if (message.includes('你好')) {
+                    aiResponse = '你好！很高兴为你服务。';
+                }
+                addChatMessage('ai', aiResponse);
+            }, 1000);
+        }
+
+        function addChatMessage(role, content, isHtml = false) {
+            const body = document.getElementById('ai-chat-body');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-message ${role}`;
+            
+            let avatarHtml = '';
+            if (role === 'ai') {
+                avatarHtml = `
+                    <div class="chat-avatar">
+                        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=DragonTeacher&backgroundColor=transparent" alt="Teacher">
+                    </div>
+                `;
+            } else {
+                avatarHtml = `
+                    <div class="chat-avatar" style="background-color: var(--ink-black);">
+                        <i class="fas fa-user" style="color: white; font-size: 16px;"></i>
+                    </div>
+                `;
+            }
+
+            msgDiv.innerHTML = `
+                ${avatarHtml}
+                <div class="chat-bubble">${isHtml ? content : escapeHtml(content)}</div>
+            `;
+            
+            body.appendChild(msgDiv);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function handleQuickAction(type) {
+            let userText = '';
+            if (type === 'summary') userText = '请帮我总结这份资料的重点。';
+            if (type === 'mindmap') userText = '请根据这份资料生成一个思维导图。';
+            if (type === 'quiz') userText = '请根据资料内容出几道测验题。';
+
+            addChatMessage('user', userText);
+
+            // 模拟 AI 处理
+            setTimeout(() => {
+                if (type === 'summary') {
+                    const summaryHtml = `
+                        <div class="ai-content-card">
+                            <div class="ai-card-title">资料总结</div>
+                            <div class="ai-card-content">
+                                1. 本文主要讲解了墨水屏技术在教育领域的应用优势。<br>
+                                2. 重点分析了护眼特性对学生视力保护的重要性。<br>
+                                3. 提出了未来数字化教育结合传统书写体验的新趋势。
+                            </div>
+                            <button class="save-note-btn" onclick="saveToNote(this, 'summary')">
+                                <i class="far fa-bookmark"></i> 存入笔记
+                            </button>
+                        </div>
+                    `;
+                    addChatMessage('ai', summaryHtml, true);
+                } else if (type === 'mindmap') {
+                    const mindmapHtml = `
+                        <div class="ai-content-card">
+                            <div class="ai-card-title">思维导图</div>
+                            <div class="mind-map-preview">
+                                <i class="fas fa-project-diagram" style="font-size: 48px; opacity: 0.3;"></i>
+                            </div>
+                            <button class="save-note-btn" onclick="saveToNote(this, 'mindmap')">
+                                <i class="far fa-bookmark"></i> 存入笔记
+                            </button>
+                        </div>
+                    `;
+                    addChatMessage('ai', mindmapHtml, true);
+                } else if (type === 'quiz') {
+                    const quizHtml = `
+                        <div class="ai-content-card">
+                            <div class="ai-card-title">小测验</div>
+                            <div class="ai-card-content">
+                                Q1: 墨水屏最大的优势是什么？<br>
+                                A. 色彩丰富 B. 护眼省电 C. 刷新率高<br><br>
+                                Q2: 本文提到的未来趋势是什么？
+                            </div>
+                            <button class="save-note-btn" onclick="startQuiz(this)">
+                                <i class="fas fa-play-circle"></i> 开始测验
+                            </button>
+                        </div>
+                    `;
+                    addChatMessage('ai', quizHtml, true);
+                }
+            }, 1500);
+        }
+
+        function saveToNote(btn, type) {
+            // 模拟保存
+            btn.innerHTML = '<i class="fas fa-check"></i> 已存入笔记';
+            btn.classList.add('saved');
+            btn.disabled = true;
+            
+            // 可以加个 Toast 提示
+            showToast('操作成功！');
+        }
+
+        function startQuiz(btn) {
+             showToast('进入测验模式...');
+        }
+
+        // Toast 提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 上传相关逻辑
+        function openUploadModal() {
+            document.getElementById('upload-method-modal').style.display = 'flex';
+        }
+
+        function closeUploadModal() {
+            document.getElementById('upload-method-modal').style.display = 'none';
+        }
+
+        function openCamera() {
+            closeUploadModal();
+            document.getElementById('camera-modal').style.display = 'flex';
+            capturedPhotos = [];
+            updatePhotoList();
+        }
+
+        function closeCamera() {
+            document.getElementById('camera-modal').style.display = 'none';
+        }
+
+        function takePhoto() {
+            // 模拟拍照
+            const photoUrl = 'https://placehold.co/150x200/eee/333?text=Photo' + (capturedPhotos.length + 1);
+            capturedPhotos.push(photoUrl);
+            updatePhotoList();
+        }
+
+        function updatePhotoList() {
+            const listEl = document.getElementById('photo-list');
+            listEl.innerHTML = '';
+            capturedPhotos.forEach(url => {
+                const item = document.createElement('div');
+                item.className = 'photo-item';
+                item.innerHTML = `<img src="${url}">`;
+                listEl.appendChild(item);
+            });
+        }
+
+        function savePhotos() {
+            if (capturedPhotos.length === 0) {
+                alert('请先拍摄照片');
+                return;
+            }
+            document.getElementById('name-modal').style.display = 'flex';
+        }
+
+        function closeNameModal() {
+            document.getElementById('name-modal').style.display = 'none';
+        }
+
+        function confirmUpload() {
+            const name = document.getElementById('file-name-input').value.trim();
+            if (!name) {
+                alert('请输入文件名称');
+                return;
+            }
+
+            // 添加新文件
+            const today = new Date().toISOString().split('T')[0];
+            const newFile = {
+                id: 'new-' + Date.now(),
+                title: name + '.jpg', // 假设保存为jpg
+                type: 'img',
+                subject: 'other', // 默认为其他
+                source: 'self',
+                date: today,
+                thumb: capturedPhotos[0] // 使用第一张图作为缩略图
+            };
+
+            materials.unshift(newFile); // 添加到开头
+            renderMaterials();
+            
+            // 关闭所有弹窗
+            closeNameModal();
+            closeCamera();
+            document.getElementById('file-name-input').value = ''; // 清空输入
+        }
+
+        // 虚拟键盘逻辑
+        let activeInput = null;
+
+        function showKeyboard(event) {
+            event.stopPropagation();
+            activeInput = event.target;
+            document.getElementById('virtual-keyboard').classList.add('show');
+        }
+
+        function hideKeyboard() {
+            document.getElementById('virtual-keyboard').classList.remove('show');
+        }
+
+        function typeKey(key) {
+            if (!activeInput) return;
+            
+            if (key === 'backspace') {
+                activeInput.value = activeInput.value.slice(0, -1);
+            } else if (key === 'space') {
+                activeInput.value += ' ';
+            } else if (key === 'shift' || key === '123' || key === 'Done') {
+                // 功能键暂不处理字符输入
+            } else {
+                activeInput.value += key;
+            }
+        }
+
+        // 点击外部关闭键盘
+        document.addEventListener('click', function(e) {
+            const keyboard = document.getElementById('virtual-keyboard');
+            const input = document.getElementById('file-name-input');
+            
+            // 只有当键盘显示时才处理
+            if (keyboard.classList.contains('show')) {
+                if (!keyboard.contains(e.target) && e.target !== input) {
+                    hideKeyboard();
+                }
+            }
+        });
+
+        // 语音输入模拟
+        function startVoiceInput() {
+            const icon = document.querySelector('.input-with-icon i');
+            icon.style.color = 'red'; // 录音状态
+            
+            // 模拟录音过程
+            setTimeout(() => {
+                const input = document.getElementById('file-name-input');
+                const mockTexts = ['数学作业', '语文笔记', '英语单词', '错题整理', '实验报告'];
+                const randomText = mockTexts[Math.floor(Math.random() * mockTexts.length)];
+                
+                input.value = randomText;
+                icon.style.color = ''; // 恢复颜色
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
